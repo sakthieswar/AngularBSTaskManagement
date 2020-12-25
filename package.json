@@ -21,10 +21,11 @@
     "@angular/router": "~10.0.11",
     "@types/jquery": "^3.5.5",
     "bootstrap": "^4.5.3",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.1",
     "ngx-bootstrap": "^6.2.0",
     "popper.js": "^1.16.1",
     "rxjs": "~6.5.5",
+    "save": "^2.4.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"
   },
