@@ -15,7 +15,6 @@ export class AdminComponent implements OnInit {
     if (user == null) {
       this.router.navigateByUrl('home');
     }
-    alert(user);
   }
 
 }

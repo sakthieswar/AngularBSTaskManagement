@@ -34,8 +34,7 @@ export class UserService {
         console.log(this.user[0].user_id);
         localStorage.setItem('user', this.user[0].user_id.toString());
 
-        alert(res.access_token);
-        alert(this.user[0].user_id);
+        //alert(this.user[0].user_id);
         //console.log(this.user[0].user_id);
         //localStorage.setItem('user', this.user[0].userid.toString());
         //this.router.navigate(['/home']);

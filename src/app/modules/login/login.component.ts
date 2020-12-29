@@ -44,7 +44,6 @@ export class LoginComponent implements OnInit {
           //this.loading = false;
           //this.hideModal();
           //this.alertService.success("Successfully login");
-          alert(data);
           //  this.router.navigate([this.returnUrl]);
         },
         error => {

@@ -18,27 +18,27 @@
               <input type="hidden" name="_token" value="">
 
               <label for="username">Username</label>
-              <input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': isRegisterForm && r.username.errors }" />
-              <div *ngIf="isRegisterForm && r.username.errors" class="invalid-feedback">
+              <input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': r.username.errors }" />
+              <div *ngIf="r.username.errors" class="invalid-feedback">
                 <div *ngIf="r.username.errors.required">Username is required</div>
               </div>
               <label for="email">Email</label>
-              <input type="email" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': isRegisterForm && r.email.errors }" />
-              <div *ngIf="isRegisterForm && r.email.errors" class="invalid-feedback">
+              <input type="email" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': r.email.errors }" />
+              <div *ngIf="r.email.errors" class="invalid-feedback">
                 <div *ngIf="r.email.errors.required">Email is required.</div>
                 <div *ngIf="r.email.errors.email">Email should be in proper format.</div>
               </div>
                <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': isRegisterForm && r.password.errors }" />
-                <div *ngIf="isRegisterForm && r.password.errors" class="invalid-feedback">
+                <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': r.password.errors }" />
+                <div *ngIf="r.password.errors" class="invalid-feedback">
                   <div *ngIf="r.password.errors.required">Password is required</div>
                 </div>
               </div>
               <div class="form-group">
                 <label for="cpassword">Confirm Password</label>
-                <input type="password" formControlName="cpassword" class="form-control" [ngClass]="{ 'is-invalid': isRegisterForm && registerForm.hasError('notSame') }" />
-                <div *ngIf="isRegisterForm && registerForm.hasError('notSame')" class="invalid-feedback">
+                <input type="password" formControlName="cpassword" class="form-control" [ngClass]="{ 'is-invalid': registerForm.hasError('notSame') }" />
+                <div *ngIf="registerForm.hasError('notSame')" class="invalid-feedback">
                   <div *ngIf="registerForm.hasError('notSame')">Password & confirm password are should be match</div>
                 </div>
               </div>
