@@ -1,16 +1,6 @@
 /* Sticky footer styles
 -------------------------------------------------- */
-.container {
-  /* position: absolute;*/
-  min-height: 550px;
-}
 
-.row {
-  margin-top: 4%;
-  min-height: 480px;
-  margin-right: 0px !important;
-  /*margin-left: 0px !important;*/
-}
 
 body {
   /* Margin bottom by footer height */

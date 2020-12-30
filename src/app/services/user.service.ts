@@ -69,18 +69,6 @@ export class UserService {
       }));
   }
 
-    //getAllUsers(): void {
-    //  this.productService.getAllCategoryList().subscribe(
-    //    (res: Category[]) => {
-    //      this.categories = res;
-    //      console.log(this.categories);
-    //    },
-    //    (err) => {
-    //      this.error = err;
-    //    }
-    //  )
-    //}
-
   public getAllUsersList(): Observable<User[]> {
     // alert(this.REST_API_SERVER + 'read.php');
 

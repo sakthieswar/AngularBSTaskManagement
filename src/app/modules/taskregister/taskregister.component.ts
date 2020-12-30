@@ -1,17 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { UserService } from '../../services/user.service';
+import { TaskService } from '../../services/task.service';
 import { first } from 'rxjs/operators';
 
 declare var $: any;
 
 @Component({
-  selector: 'app-userregister',
-  templateUrl: './userregister.component.html',
-  styleUrls: ['./userregister.component.css']
+  selector: 'app-taskregister',
+  templateUrl: './taskregister.component.html',
+  styleUrls: ['./taskregister.component.css']
 })
-export class UserregisterComponent implements OnInit {
+export class TaskregisterComponent implements OnInit {
 
   registerForm: FormGroup;
 
@@ -19,24 +19,27 @@ export class UserregisterComponent implements OnInit {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: UserService) { }
+    private taskService: TaskService) { }
 
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group({
-      username: [null, Validators.required],
-      email: [null, [Validators.required, Validators.email]],
-      password: [null, Validators.required],
-      cpassword: [null, Validators.required],
-      contactno: [null]
-    }, { validator: this.checkPasswords });
+      name: [null, Validators.required],
+      description: [null],
+      attachment: [null],
+      priority: [null],
+      startdate: [null],
+      enddate: [null],
+      status: [null]
+    });
   }
   get r() { return this.registerForm.controls; }
   onSave() {
-    this.authenticationService.register(this.r.username.value, this.r.email.value, this.r.password.value, this.r.contactno.value, '1', '1', 'test')
+    this.taskService.register(this.r.name.value, this.r.description.value, this.r.attachment.value, this.r.priority.value, this.r.startdate.value, this.r.enddate.value, '1')
       .pipe(first())
       .subscribe(
         data => {
           //alert('test');
+          this.hideModals();
           this.router.navigate(['/admin']);
           //console.log(data);
           //this.loading = false;
@@ -52,15 +55,8 @@ export class UserregisterComponent implements OnInit {
         });
   }
 
-  //To verify password & confirm password are same.
-  checkPasswords(group: FormGroup) {
-    let pass = group.get('password').value;
-    let confirmPass = group.get('cpassword').value;
-
-    return pass === confirmPass ? null : { notSame: true }
+  hideModals(): void {
+    document.getElementById('taskModal').click();
   }
 
-  hideModal(): void {
-    document.getElementById('close-modal').click();
-  }
 }
