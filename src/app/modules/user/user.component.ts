@@ -41,26 +41,26 @@ export class UserComponent implements OnInit {
       contactno: [null]
     }, { validator: this.checkPasswords });
 }
-onSave() {
-  this.authenticationService.register('test','test@email.com','test123','12345','1','1','test')
-    .pipe(first())
-    .subscribe(
-      data => {
-        alert('test');
-        //this.router.navigate(['/home']);
-        //console.log(data);
-        //this.loading = false;
-        //this.hideModal();
-        //this.alertService.success("Successfully login");
-        //alert(data);
-        //  this.router.navigate([this.returnUrl]);
-      },
-      error => {
-        alert(error);
-        //this.alertService.error(error);
-        //this.loading = false;
-      });
-}
+//onSave() {
+//  this.authenticationService.register('test','test@email.com','test123','12345','1','1','test')
+//    .pipe(first())
+//    .subscribe(
+//      data => {
+//        alert('test');
+//        //this.router.navigate(['/home']);
+//        //console.log(data);
+//        //this.loading = false;
+//        //this.hideModal();
+//        //this.alertService.success("Successfully login");
+//        //alert(data);
+//        //  this.router.navigate([this.returnUrl]);
+//      },
+//      error => {
+//        alert(error);
+//        //this.alertService.error(error);
+//        //this.loading = false;
+//      });
+//}
 
   //To verify password & confirm password are same.
   checkPasswords(group: FormGroup) {

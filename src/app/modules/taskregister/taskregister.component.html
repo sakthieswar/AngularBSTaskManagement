@@ -14,7 +14,8 @@
         <div class="">
           <div>
             <h1>Task Registeration!</h1>
-            <form [formGroup]="registerForm" (ngSubmit)="onSave()">
+            <!--<form [formGroup]="registerForm" (ngSubmit)="onSave()">-->
+            <form [formGroup]="registerForm" (ngSubmit)="SaveTask()">
               <input type="hidden" name="_token" value="">
               <div class="form-group">
                 <label for="name">Name</label>
@@ -30,13 +31,29 @@
                 </div>
               </div>
               <div class="form-group">
+                <label for="priority">Assigned To</label>
+                <!--<input type="text" formControlName="priority" class="form-control" />-->
+                <select class="form-control" formControlName="assignedToUserName" (change)="changeAssignedToUser($event)" id="assignedTolist">
+                  <option value="">Please select assignee</option>
+                  <option *ngFor="let assigneduser of assignedTolist; let i = index" [value]="assignedTolist[i].user_id">
+                    {{assignedTolist[i].user_name}}
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
                 <label for="attachment">Attachment</label>
-                <input type="text" formControlName="attachment" class="form-control" [ngClass]="{ 'is-invalid': r.attachment.errors }" />
-
+                <!--<input type="text" formControlName="attachment" class="form-control" [ngClass]="{ 'is-invalid': r.attachment.errors }" />-->
+                <input type="file" class="form-control input-lg" name="attachment" (change)="onFileSelect($event)" />
               </div>
               <div class="form-group">
                 <label for="priority">Priority</label>
-                <input type="text" formControlName="priority" class="form-control" />
+                <!--<input type="text" formControlName="priority" class="form-control" />-->
+                <select class="form-control" formControlName="priorityName" (change)="changePriority($event)" id="taskpriorities">
+                  <option value="">Please select priority</option>
+                  <option *ngFor="let category of taskpriorities; let i = index" [value]="taskpriorities[i].id">
+                    {{taskpriorities[i].name}}
+                  </option>
+                </select>
               </div>
               <div class="form-group">
                 <label for="startdate">startdate</label>
@@ -48,7 +65,13 @@
               </div>
               <div class="form-group">
                 <label for="status">status</label>
-                <input type="text" formControlName="status" class="form-control" />
+                <!--<input type="text" formControlName="status" class="form-control" />-->
+                <select class="form-control" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
+                  <option value="">Please select status</option>
+                  <option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
+                    {{taskstatuslist[i].name}}
+                  </option>
+                </select>
               </div>
 
               <div class="form-group">

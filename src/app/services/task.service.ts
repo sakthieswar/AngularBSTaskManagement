@@ -4,6 +4,7 @@ import { HttpClient, HttpParams, HttpHeaders, HttpErrorResponse } from '@angular
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Task } from '../entities/task';
+import { TaskPriority } from '../entities/task_priority';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -13,6 +14,9 @@ export class TaskService {
   private REST_API_SERVER = environment.baseUrl;
   task: Task;
   tasks: Task[];
+  taskpriorities: TaskPriority[];
+  taskstatus: TaskPriority[];
+
 
   constructor(private http: HttpClient,
     private router: Router,
@@ -34,6 +38,11 @@ export class TaskService {
       }));
   }
 
+  public saveTask(data) {
+    let uploadURL = this.REST_API_SERVER + 'addnewtaskwithattachment.php';
+    return this.http.post<any>(uploadURL, data);
+  }
+
   public getAllTaskList(): Observable<Task[]> {
     // alert(this.REST_API_SERVER + 'read.php');
 
@@ -42,6 +51,30 @@ export class TaskService {
       map((res) => {
         this.tasks = res['data'];
         return this.tasks;
+      }),
+      catchError(this.handleError));
+  }
+
+  public getAllTaskPriorityList(): Observable<TaskPriority[]> {
+    // alert(this.REST_API_SERVER + 'read.php');
+
+    return this.http.get(this.REST_API_SERVER + 'getAllTaskPriority.php').pipe(
+      // return this._http.get('http://localhost/read.php').pipe(
+      map((res) => {
+        this.taskpriorities = res['data'];
+        return this.taskpriorities;
+      }),
+      catchError(this.handleError));
+  }
+
+  public getAllTaskStatusList(): Observable<TaskPriority[]> {
+    // alert(this.REST_API_SERVER + 'read.php');
+
+    return this.http.get(this.REST_API_SERVER + 'getAllTaskStatus.php').pipe(
+      // return this._http.get('http://localhost/read.php').pipe(
+      map((res) => {
+        this.taskstatus = res['data'];
+        return this.taskstatus;
       }),
       catchError(this.handleError));
   }

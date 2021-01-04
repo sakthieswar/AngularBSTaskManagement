@@ -5,12 +5,12 @@
         <h5 class="card-title text-center">Sign In</h5>
         <form [formGroup]="loginForm" (ngSubmit)="onSave()" class="form-signin">
           <div class="form-label-group">
-            <label for="inputEmail">Email address</label>
-            <input type="email" formControlName="useremail" class="form-control" placeholder="Email address" required autofocus>
+            <label for="useremail">Email address</label>
+            <input type="email" formControlName="useremail" class="form-control" placeholder="Email address" required>
           </div>
 
           <div class="form-label-group">
-            <label for="inputPassword">Password</label>
+            <label for="password">Password</label>
             <input type="password" formControlName="password" class="form-control" placeholder="Password" required>
           </div>
 

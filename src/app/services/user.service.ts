@@ -33,6 +33,8 @@ export class UserService {
         this.user = res['data'];
         console.log(this.user[0].user_id);
         localStorage.setItem('user', this.user[0].user_id.toString());
+        localStorage.setItem('role', this.user[0].role.toString());
+
 
         //alert(this.user[0].user_id);
         //console.log(this.user[0].user_id);
@@ -76,7 +78,7 @@ export class UserService {
       // return this._http.get('http://localhost/read.php').pipe(
       map((res) => {
         this.users = res['data'];
-        console.log(this.users);
+        //console.log(this.users);
         return this.users;
       }),
       catchError(this.handleError));

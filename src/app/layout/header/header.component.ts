@@ -11,15 +11,19 @@ import { first } from 'rxjs/operators';
 })
 export class HeaderComponent implements OnInit {
 
+  public isLogin: boolean = false;
+
   constructor(private router: Router) { }
 
   ngOnInit(): void {
+    let user = JSON.parse(localStorage.getItem('user'));
+    if (user != null) {
+      this.isLogin = true;
+    }
   }
   logoff() {
     let user = JSON.parse(localStorage.getItem('user'));
-    alert('Before log off ' + user);
     localStorage.removeItem("user");
-    alert('After log off ' + user);
     this.router.navigateByUrl('home');
     
   }

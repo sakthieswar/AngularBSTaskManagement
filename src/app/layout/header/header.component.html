@@ -12,30 +12,49 @@
   </nav>
 </header>-->
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" routerLink="">SoleFiteness</a>
+<!--<nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark">
+  <a class="navbar-brand" routerLink="">Task Management</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <!-- <div class="collapse navbar-collapse" [ngClass]="{ 'show': navbarOpen }"> -->
-  <div class="collapse navbar-collapse ">
+  </button> 
+  <div>
+    <span style="color:white; text-align:center;">VS Digimedia</span>
+  </div>
+</nav>-->
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+  <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item active dropdown">
-        <a class="nav-link" routerLink="" routerLinkActive="active">Government E-invoicing <span class="sr-only">(current)</span></a>
+      <li class="nav-item active">
+        <a class="nav-link" href="#">VJ Media</a>
+      </li>
+      <!--<li class="nav-item">
+        <a class="nav-link" href="//codeply.com">Codeply</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLinkActive="active"><i class="fa fa-phone"></i><span>Call us:</span><a href="tel:++65 9270 3242">+65 9270 3242</a></a>
-      </li>
-      <!-- <li class="nav-item left">
-        <a class="nav-link" routerLink="showroom" routerLinkActive="active">Show room</a>
+        <a class="nav-link" href="#">Link</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" routerLink="hotdeals" routerLinkActive="active">Hot deals</a>
+        <a class="nav-link" href="#">Link</a>
       </li>
       <li class="nav-item">
-          <a class="nav-link" routerLink="cart" routerLinkActive="active">Cart</a>
-        </li> -->
+        <a class="nav-link" href="#">Link</a>
+      </li>-->
+    </ul>
+  </div>
+  <div class="mx-auto order-0">
+    <span class="navbar-brand mx-auto">VJ Digimedia</span>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  </div>
+  <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Right</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" *ngIf="isLogin" (click)="logoff()">Logoff</a>
+      </li>
     </ul>
   </div>
 </nav>

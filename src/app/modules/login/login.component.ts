@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { first } from 'rxjs/operators';
+import { HeaderComponent } from '../../layout/header/header.component';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,7 @@ export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
   isvaliduser: boolean;
+  isl: HeaderComponent;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -38,7 +40,9 @@ export class LoginComponent implements OnInit {
         data => {
           //this.router.navigate(['/user']);
           this.isvaliduser = true;
+          //this.isl.isLogin = true;
           this.router.navigateByUrl('admin');
+          
 
           //console.log(data);
           //this.loading = false;
