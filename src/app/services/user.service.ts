@@ -83,6 +83,17 @@ export class UserService {
       }),
       catchError(this.handleError));
   }
+
+  public saveUser(data) {
+    let uploadURL = this.REST_API_SERVER + 'adduser.php';
+    return this.http.post<any>(uploadURL, data);
+  }
+
+  public updateUser(data) {
+    let uploadURL = this.REST_API_SERVER + 'updateuser.php';
+    return this.http.post<any>(uploadURL, data);
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.log(error);
 

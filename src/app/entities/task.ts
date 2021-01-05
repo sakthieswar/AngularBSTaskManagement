@@ -1,11 +1,14 @@
 export class Task {
-  id: number;
+  task_id: number;
   name: string;
-  assignedto: number;
+  assignedto: string;
   description: string;
   attachment: string;
-  priority: number;
+  priority: string;
   start_date: Date;
   end_date: Date;
-  status: number;
+  status: string;
+  assignedtouserid: number;
+  statusid: number;
+  priorityid: number;
 }

@@ -35,6 +35,11 @@ export class TaskComponent implements OnInit {
 
   isFileChanged: boolean = false;
 
+  selectedAssigneeID: number;
+  selectedTaskPriorityID: number;
+  selectedTaskStatusID: number;
+
+
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -53,12 +58,17 @@ export class TaskComponent implements OnInit {
     this.getAllTaskStatus();
     this.getAllUserList();
     this.generateFormControls();
+
+    this.selectedAssigneeID = 1;
+    this.selectedTaskPriorityID = 1;
+    this.selectedTaskStatusID = 1;
     
   }
 
   generateFormControls() {
     this.registerForm = this.formBuilder.group({
       index: [{ value: null, disabled: true }],
+      task_id: [{ value: null, disabled: true }],
       name: [null, Validators.required],
       taskpriorities: [''],
       taskstatuslist: [''],
@@ -161,6 +171,9 @@ export class TaskComponent implements OnInit {
   SaveTask() {
     const formData = new FormData();
 
+    let index = this.registerForm.getRawValue().index;
+    //alert(index);
+
     formData.append('name', this.registerForm.get('name').value);
     formData.append('description', this.registerForm.get('description').value);
     formData.append('attachment', this.registerForm.get('attachment').value);
@@ -170,19 +183,41 @@ export class TaskComponent implements OnInit {
     formData.append('status', this.statusId);
     formData.append('assignedto', this.assignedToUserId);
 
-    this.taskService.saveTask(formData)
-      .subscribe(
-        (res) => {
-          this.uploadResponse = res;
-          alert('You have successfully added task: ' + this.registerForm.get('name').value);
-          this.router.navigate(['/admin']);
-          this.hideModals();
-          //console.log(res);
-        },
-        (err) => {
-          console.log(err);
-        }
-      );
+    if (index != null) {
+      //alert(' task id: ' + this.registerForm.get('task_id').value);
+      formData.append('task_id', this.registerForm.get('task_id').value);
+
+      this.taskService.updateTask(formData)
+        .subscribe(
+          (res) => {
+            this.uploadResponse = res;
+            alert('You have successfully updated the task: ' + this.registerForm.get('name').value);
+            this.router.navigate(['/task']);
+            //this.hideModals();
+            //console.log(res);
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+    }
+
+    else {
+
+      this.taskService.saveTask(formData)
+        .subscribe(
+          (res) => {
+            this.uploadResponse = res;
+            alert('You have successfully added task: ' + this.registerForm.get('name').value);
+            this.router.navigate(['/task']);
+            //this.hideModals();
+            //console.log(res);
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
+    }
   }
 
   hideModals(): void {
@@ -190,38 +225,45 @@ export class TaskComponent implements OnInit {
   }
 
   taskEdit(task, i) {
-    //alert(task.decription);
+    alert(task.assignedto);
     //$("#taskModal").modal('show');
     this.showAddWindow();
-    //document.getElementById('taskModal').show();
-    //document.getElementById('').
 
-    this.assignedToUserId = task.assignedto;
+    this.selectedAssigneeID = task.assigned_to_userid;
+    this.selectedTaskPriorityID = task.task_priority_id;
+    this.selectedTaskStatusID = task.task_status;
 
     this.registerForm.setValue({
       index: i,
+      task_id: task.task_id,
       name: task.name,
-      taskpriorities: [''],
-      taskstatuslist: [''],
-      assignedTolist: [''],
+      taskpriorities: [],
+      taskstatuslist: [],
+      assignedTolist: [],
       assignedToUserName: task.assignedto,
-      description: task.decription,
+      description: task.description,
       attachment: task.task_attachment,
       priority: task.priority,
       startdate: task.task_startdate,
       enddate: task.task_enddate,
       status: task.task_status,
       priorityName: null,
-      statusName: null,
-      assignedToUserId: task.assignedto
-
+      statusName: null
     })
+    //this.assignedToUserId = "2";
+    //this.registerForm.controls.taskpriorities.patchValue(this.taskpriorities[0].id);
   }
   showAddWindow() {
     this.isAddEditForm = true;
+    this.resetForm();
   }
   showTaskListWindow() {
     this.isAddEditForm = false;
+  }
+
+  resetForm() {
+    this.registerForm.reset();
+    this.isFileChanged = false;
   }
 
 }

@@ -79,6 +79,11 @@ export class TaskService {
       catchError(this.handleError));
   }
 
+  public updateTask(data) {
+    let uploadURL = this.REST_API_SERVER + 'updatetask.php';
+    return this.http.post<any>(uploadURL, data);
+  }
+
   private handleError(error: HttpErrorResponse) {
     console.log(error);
 

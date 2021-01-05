@@ -33,9 +33,10 @@
           </thead>
           <tbody>
             <tr *ngFor="let task of tasks; let i = index">
+              <td style="display:none;">{{ task.task_id }}</td>
               <td>{{ task.name }}</td>
               <td>{{ task.assignedto }}</td>
-              <td>{{ task.decription }}</td>
+              <td>{{ task.description }}</td>
               <td>{{ task.task_attachment }}</td>
               <td>{{ task.priority }}</td>
               <td>{{ task.task_startdate }}</td>
@@ -46,7 +47,7 @@
                 <a class="btn btn-danger" href="#">Delete</a>
               </td>
               <!--<td><ngb-highlight [result]="user.user_email"></ngb-highlight></td>
-              <td><ngb-highlight [result]="user.contact_no"></ngb-highlight></td>-->
+  <td><ngb-highlight [result]="user.contact_no"></ngb-highlight></td>-->
             </tr>
           </tbody>
         </table>
@@ -73,7 +74,7 @@
           <div class="form-group">
             <label for="priority">Assigned To</label>
             <!--<input type="text" formControlName="priority" class="form-control" />-->
-            <select class="form-control" formControlName="    " (change)="changeAssignedToUser($event)" id="assignedTolist">
+            <select class="form-control" [(ngModel)]="selectedAssigneeID" formControlName="assignedToUserName" (change)="changeAssignedToUser($event)" id="assignedTolist">
               <option value="">Please select assignee</option>
               <option *ngFor="let assigneduser of assignedTolist; let i = index" [value]="assignedTolist[i].user_id">
                 {{assignedTolist[i].user_name}}
@@ -88,7 +89,7 @@
           <div class="form-group">
             <label for="priority">Priority</label>
             <!--<input type="text" formControlName="priority" class="form-control" />-->
-            <select class="form-control" formControlName="priorityName" (change)="changePriority($event)" id="taskpriorities">
+            <select class="form-control" [(ngModel)]="selectedTaskPriorityID" formControlName="priorityName" (change)="changePriority($event)" id="taskpriorities">
               <option value="">Please select priority</option>
               <option *ngFor="let category of taskpriorities; let i = index" [value]="taskpriorities[i].id">
                 {{taskpriorities[i].name}}
@@ -106,7 +107,7 @@
           <div class="form-group">
             <label for="status">status</label>
             <!--<input type="text" formControlName="status" class="form-control" />-->
-            <select class="form-control" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
+            <select class="form-control" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
               <option value="">Please select status</option>
               <option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
                 {{taskstatuslist[i].name}}
