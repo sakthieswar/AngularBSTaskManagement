@@ -39,7 +39,6 @@ export class TaskComponent implements OnInit {
   selectedTaskPriorityID: number;
   selectedTaskStatusID: number;
 
-
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -224,8 +223,8 @@ export class TaskComponent implements OnInit {
     document.getElementById('taskModal').click();
   }
 
-  taskEdit(task, i) {
-    alert(task.assignedto);
+  taskEdit(task) {
+    //alert(task.assignedto);
     //$("#taskModal").modal('show');
     this.showAddWindow();
 
@@ -234,7 +233,7 @@ export class TaskComponent implements OnInit {
     this.selectedTaskStatusID = task.task_status;
 
     this.registerForm.setValue({
-      index: i,
+      index: task.task_id,
       task_id: task.task_id,
       name: task.name,
       taskpriorities: [],
@@ -262,6 +261,27 @@ export class TaskComponent implements OnInit {
   resetForm() {
     this.registerForm.reset();
     this.isFileChanged = false;
+  }
+
+  //This is for search.
+  name: any;
+  searchTask() {
+    if (this.name == "") {
+      this.ngOnInit();
+    }
+    else {
+      this.tasks = this.tasks.filter(res => {
+        return res.name.toLocaleLowerCase().match(this.name.toLocaleLowerCase());
+      });
+    }
+  }
+
+  //This is for sorting.
+  key: string = "name";
+  reverse: boolean = false;
+  sort(key) {
+    this.key = key;
+    this.reverse = !this.reverse;
   }
 
 }
