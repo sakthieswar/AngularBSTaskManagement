@@ -250,8 +250,6 @@ export class TaskComponent implements OnInit {
       priorityName: null,
       statusName: null
     })
-    //this.assignedToUserId = "2";
-    //this.registerForm.controls.taskpriorities.patchValue(this.taskpriorities[0].id);
   }
   showAddWindow() {
     this.isAddEditForm = true;
