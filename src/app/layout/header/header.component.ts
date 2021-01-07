@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit {
   logoff() {
     let user = JSON.parse(localStorage.getItem('user'));
     localStorage.removeItem("user");
+    localStorage.removeItem("role");
     this.router.navigateByUrl('home');
-    
   }
 }

@@ -25,7 +25,12 @@ export class AdminComponent implements OnInit {
 
   ngOnInit(): void {
     let user = JSON.parse(localStorage.getItem('user'));
+    let role = JSON.parse(localStorage.getItem('role'));
+    //alert(role);
     if (user == null) {
+      this.router.navigateByUrl('home');
+    }else if (role != 1) {
+      alert('You do not have access to this page.');
       this.router.navigateByUrl('home');
     }
     this.getAllUsers();

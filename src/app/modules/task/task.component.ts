@@ -7,6 +7,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { TaskPriority } from '../../entities/task_priority';
 import { User } from '../../entities/user';
 import { UserService } from '../../services/user.service';
+import { Observable } from 'rxjs';
+import { saveAs } from 'file-saver';
 
 declare var $: any;
 
@@ -39,6 +41,8 @@ export class TaskComponent implements OnInit {
   selectedTaskPriorityID: number;
   selectedTaskStatusID: number;
 
+  isAdminRole: boolean = false;
+
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
@@ -48,15 +52,23 @@ export class TaskComponent implements OnInit {
 
   ngOnInit(): void {
     let user = JSON.parse(localStorage.getItem('user'));
+    let loginrole = JSON.parse(localStorage.getItem('role'));
     if (user == null) {
       this.router.navigateByUrl('home');
+    } else if (loginrole == 1) {
+      this.isAdminRole = true;
+      this.getAllTasks();
+      this.getAllUserList();
+      //getUserAllTaskList
+    } else if (loginrole != 1) {
+      this.getAllUserTasks(user);
     }
-    this.isAddEditForm = false;
-    this.getAllTasks();
     this.getAllTaskPriority();
     this.getAllTaskStatus();
     this.getAllUserList();
     this.generateFormControls();
+    this.isAddEditForm = false;
+
 
     this.selectedAssigneeID = 1;
     this.selectedTaskPriorityID = 1;
@@ -150,6 +162,17 @@ export class TaskComponent implements OnInit {
 
   getAllTasks(): void {
     this.taskService.getAllTaskList().subscribe(
+      (res: Task[]) => {
+        this.tasks = res;
+      },
+      (err) => {
+        this.error = err;
+      }
+    )
+  }
+
+  getAllUserTasks(user_id: number): void {
+    this.taskService.getUserAllTaskList(user_id).subscribe(
       (res: Task[]) => {
         this.tasks = res;
       },
@@ -284,4 +307,25 @@ export class TaskComponent implements OnInit {
     this.reverse = !this.reverse;
   }
 
+  //This is for downloading.
+  //download(url: string): Observable<Blob> {
+  //  alert(url);
+  //  return this.http.get(url, {
+  //    responseType: 'blob'
+  //  })
+  //}
+
+  download(url: string): void {
+    this.taskService
+      .download(url)
+      .subscribe(blob => saveAs(blob, 'archive.txt'))
+      //.subscribe(blob => {
+      //  const a = document.createElement('a')
+      //  const objectUrl = URL.createObjectURL(blob)
+      //  a.href = objectUrl
+      //  a.download = 'archive.zip';
+      //  a.click();
+      //  URL.revokeObjectURL(objectUrl);
+      //})
+  }
 }

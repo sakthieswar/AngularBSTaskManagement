@@ -12,8 +12,10 @@ export class SideComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    let adminRole = JSON.parse(localStorage.getItem('user'));
+    let adminRole = JSON.parse(localStorage.getItem('role'));
     if (adminRole == 1) {
+      this.adminRole = true;
+    } else {
       this.adminRole = false;
     }
   }

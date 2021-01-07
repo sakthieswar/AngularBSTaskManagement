@@ -6,10 +6,11 @@ import { UserComponent } from './modules/user/user.component';
 import { TaskComponent } from './modules/task/task.component';
 import { OrderComponent } from './modules/order/order.component';
 import { LoginComponent } from './modules/login/login.component';
+import { HomeComponent } from './modules/home/home.component';
 
 const routes: Routes = [
-  { path: '', component: LoginComponent },
-  { path: 'home', component: LoginComponent },
+  { path: '', component: HomeComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'admin', component: AdminComponent },
   { path: 'user', component: UserComponent },
   { path: 'task', component: TaskComponent },

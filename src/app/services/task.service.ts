@@ -38,23 +38,6 @@ export class TaskService {
       }));
   }
 
-  public saveTask(data) {
-    let uploadURL = this.REST_API_SERVER + 'addnewtaskwithattachment.php';
-    return this.http.post<any>(uploadURL, data);
-  }
-
-  public getAllTaskList(): Observable<Task[]> {
-    // alert(this.REST_API_SERVER + 'read.php');
-
-    return this.http.get(this.REST_API_SERVER + 'getAllTask.php').pipe(
-      // return this._http.get('http://localhost/read.php').pipe(
-      map((res) => {
-        this.tasks = res['data'];
-        return this.tasks;
-      }),
-      catchError(this.handleError));
-  }
-
   public getAllTaskPriorityList(): Observable<TaskPriority[]> {
     // alert(this.REST_API_SERVER + 'read.php');
 
@@ -79,9 +62,45 @@ export class TaskService {
       catchError(this.handleError));
   }
 
+  public getAllTaskList(): Observable<Task[]> {
+    // alert(this.REST_API_SERVER + 'read.php');
+
+    return this.http.get(this.REST_API_SERVER + 'getAllTask.php').pipe(
+      // return this._http.get('http://localhost/read.php').pipe(
+      map((res) => {
+        this.tasks = res['data'];
+        return this.tasks;
+      }),
+      catchError(this.handleError));
+  }
+
+  public getUserAllTaskList(user_id: number): Observable<Task[]> {
+    // alert(this.REST_API_SERVER + 'read.php');
+
+    return this.http.get(this.REST_API_SERVER + 'getUserTask.php?user_id=' + user_id).pipe(
+      // return this._http.get('http://localhost/read.php').pipe(
+      map((res) => {
+        this.tasks = res['data'];
+        return this.tasks;
+      }),
+      catchError(this.handleError));
+  }
+
+  public saveTask(data) {
+    let uploadURL = this.REST_API_SERVER + 'addnewtaskwithattachment.php';
+    return this.http.post<any>(uploadURL, data);
+  }
+
   public updateTask(data) {
     let uploadURL = this.REST_API_SERVER + 'updatetask.php';
     return this.http.post<any>(uploadURL, data);
+  }
+
+  //This is for download file.
+  download(url: string): Observable<Blob> {
+    return this.http.get(url, {
+      responseType: 'blob'
+    })
   }
 
   private handleError(error: HttpErrorResponse) {

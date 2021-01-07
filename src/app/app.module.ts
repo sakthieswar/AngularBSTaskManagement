@@ -22,7 +22,8 @@ import { TaskService } from './services/task.service';
 import { UserregisterComponent } from './modules/userregister/userregister.component';
 import { LoginComponent } from './modules/login/login.component';
 import { TaskregisterComponent } from './modules/taskregister/taskregister.component';
-import { OrderregisterComponent } from './modules/orderregister/orderregister.component'
+import { OrderregisterComponent } from './modules/orderregister/orderregister.component';
+import { HomeComponent } from './modules/home/home.component'
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { OrderregisterComponent } from './modules/orderregister/orderregister.co
     UserregisterComponent,
     LoginComponent,
     TaskregisterComponent,
-    OrderregisterComponent
+    OrderregisterComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
