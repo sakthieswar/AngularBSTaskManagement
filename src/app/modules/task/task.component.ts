@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TaskService } from '../../services/task.service';
 import { first } from 'rxjs/operators';
-import { Task } from '../../entities/task';
+import { Task, Attachment } from '../../entities/task';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { TaskPriority } from '../../entities/task_priority';
 import { User } from '../../entities/user';
@@ -15,11 +16,13 @@ declare var $: any;
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
-  styleUrls: ['./task.component.css']
+  styleUrls: ['./task.component.css'],
+  providers: [DatePipe]
 })
 export class TaskComponent implements OnInit {
 
   tasks: Task[];
+  attachments: Attachment[];
   public error;
   isAddEditForm: boolean = false;
 
@@ -42,15 +45,24 @@ export class TaskComponent implements OnInit {
   selectedTaskStatusID: number;
 
   isAdminRole: boolean = false;
+  isTaskCompleted: boolean = false;
+  todayDate = new Date().toISOString();
+
+  currentRate: number = 0;
 
   constructor(
     private formBuilder: FormBuilder,
+    private datePipe: DatePipe,
     private route: ActivatedRoute,
     private router: Router,
     private taskService: TaskService,
-    private userService: UserService) { }
+    private userService: UserService) {
+    //this.todayDate = this.datePipe.transform(this.todayDate, 'M/d/yy h:mm a');
+    this.todayDate = this.datePipe.transform(this.todayDate, 'yyyy/M/d h:mm:ss');
+    }
 
   ngOnInit(): void {
+    //alert(this.todayDate);
     let user = JSON.parse(localStorage.getItem('user'));
     let loginrole = JSON.parse(localStorage.getItem('role'));
     if (user == null) {
@@ -68,12 +80,12 @@ export class TaskComponent implements OnInit {
     this.getAllUserList();
     this.generateFormControls();
     this.isAddEditForm = false;
-
+    this.isTaskCompleted = false;
 
     this.selectedAssigneeID = 1;
     this.selectedTaskPriorityID = 1;
     this.selectedTaskStatusID = 1;
-    
+
   }
 
   generateFormControls() {
@@ -87,12 +99,13 @@ export class TaskComponent implements OnInit {
       description: [null],
       attachment: [null],
       priority: [null],
-      startdate: [null],
+      startdate: [],
       enddate: [null],
       status: [null],
       priorityName: [''],
       statusName: [''],
-      assignedToUserName: ['']
+      assignedToUserName: [''],
+      workhours: ['']
     });
   }
 
@@ -114,7 +127,7 @@ export class TaskComponent implements OnInit {
     [event.target['options'].selectedIndex].text;
     this.priorityId = event.target['options']
     [event.target['options'].selectedIndex].value;
-    alert(this.priorityId);
+    //alert(this.priorityId);
   }
 
   getAllTaskStatus(): void {
@@ -135,7 +148,12 @@ export class TaskComponent implements OnInit {
     [event.target['options'].selectedIndex].text;
     this.statusId = event.target['options']
     [event.target['options'].selectedIndex].value;
-    //alert(this.statusId);
+    //alert(this.statusName);
+    if (this.statusName == "Completed") {
+      this.isTaskCompleted = true;
+    } else {
+      this.isTaskCompleted = false;
+    }
   }
 
   getAllUserList(): void {
@@ -182,6 +200,18 @@ export class TaskComponent implements OnInit {
     )
   }
 
+  getTaskAttachments(task_id: number): void {
+    this.taskService.getAllTaskAttachmentList(task_id).subscribe(
+      (res: Attachment[]) => {
+        this.attachments = res;
+        //alert(this.attachments[0].filepath);
+      },
+      (err) => {
+        this.error = err;
+      }
+    )
+  }
+
   onFileSelect(event) {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
@@ -194,13 +224,14 @@ export class TaskComponent implements OnInit {
     const formData = new FormData();
 
     let index = this.registerForm.getRawValue().index;
-    //alert(index);
+    //alert(this.todayDate);
 
     formData.append('name', this.registerForm.get('name').value);
     formData.append('description', this.registerForm.get('description').value);
     formData.append('attachment', this.registerForm.get('attachment').value);
     formData.append('priority', this.priorityId);
-    formData.append('startdate', this.registerForm.get('startdate').value);
+    //formData.append('startdate', this.registerForm.get('startdate').value);
+    formData.append('startdate', this.todayDate);
     formData.append('enddate', this.registerForm.get('enddate').value);
     formData.append('status', this.statusId);
     formData.append('assignedto', this.assignedToUserId);
@@ -270,7 +301,8 @@ export class TaskComponent implements OnInit {
       enddate: task.task_enddate,
       status: task.task_status,
       priorityName: null,
-      statusName: null
+      statusName: null,
+      workhours: []
     })
   }
   showAddWindow() {
@@ -308,24 +340,28 @@ export class TaskComponent implements OnInit {
   }
 
   //This is for downloading.
-  //download(url: string): Observable<Blob> {
-  //  alert(url);
-  //  return this.http.get(url, {
-  //    responseType: 'blob'
-  //  })
+  download(url: string): Observable<Blob> {
+    //alert(url);
+    return this.download(url);
+  }
+
+  //download(url: string): void {
+  //  this.taskService
+  //    .download(url)
+  //    .subscribe(blob => saveAs(blob, 'archive.txt'))
+  //  //.subscribe(blob => {
+  //  //  const a = document.createElement('a')
+  //  //  const objectUrl = URL.createObjectURL(blob)
+  //  //  a.href = objectUrl
+  //  //  a.download = 'archive.zip';
+  //  //  a.click();
+  //  //  URL.revokeObjectURL(objectUrl);
+  //  //})
   //}
 
-  download(url: string): void {
-    this.taskService
-      .download(url)
-      .subscribe(blob => saveAs(blob, 'archive.txt'))
-      //.subscribe(blob => {
-      //  const a = document.createElement('a')
-      //  const objectUrl = URL.createObjectURL(blob)
-      //  a.href = objectUrl
-      //  a.download = 'archive.zip';
-      //  a.click();
-      //  URL.revokeObjectURL(objectUrl);
-      //})
+  hideModalAttachments(): void {
+    document.getElementById('TaskAttachmentModal').click();
   }
+
+
 }

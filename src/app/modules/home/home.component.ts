@@ -42,6 +42,11 @@ export class HomeComponent implements OnInit {
 
   onSave() {
     //this.router.navigateByUrl('admin');
+
+    if (this.loginForm.invalid) {
+      return;
+    }
+
     this.authenticationService.login(this.l.useremail.value, this.l.password.value)
       .pipe(first())
       .subscribe(
@@ -59,7 +64,8 @@ export class HomeComponent implements OnInit {
           //  this.router.navigate([this.returnUrl]);
         },
         error => {
-          alert(error);
+          alert('Username or password is incorrect.');
+          //console.log(error);
           //this.alertService.error(error);
           //this.loading = false;
         });

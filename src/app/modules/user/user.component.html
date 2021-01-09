@@ -15,22 +15,21 @@
     <div *ngIf="isAddEditForm==false">
       <form>
         <div class="form-group form-inline">
-          Full text search: <input class="form-control ml-2" type="text" name="searchTerm" />
-          <span class="ml-3">Loading...</span>
+          <input class="form-control ml-2" type="text" name="name" [(ngModel)]="name" (ngModelChange)="searchUser()" placeholder="Please enter task name to filter." />
         </div>
 
         <table class="table table-striped table-border">
           <thead>
             <tr>
-              <th scope="col">#</th>
-              <th scope="col">Name</th>
+              <th style="width:10%; cursor:pointer;" (click)="sort('user_id')"># &nbsp; <i class="fa fa-sort"></i></th>
+              <th style="width:10%; cursor:pointer;" (click)="sort('user_name')">Name &nbsp; <i class="fa fa-sort"></i></th>
               <th scope="col">Email</th>
               <th scope="col">Contact No</th>
               <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let user of users; let i = index">
+            <tr *ngFor="let user of users | orderBy: key: reverse | paginate: { itemsPerPage: 5, currentPage: p }">
               <th scope="row">{{ user.user_id }}</th>
               <td>
                 {{ user.user_name }}
@@ -44,6 +43,7 @@
               </td>
             </tr>
           </tbody>
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
         </table>
 
         <!--<div class="d-flex justify-content-between p-2">

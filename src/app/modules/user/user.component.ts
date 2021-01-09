@@ -161,7 +161,7 @@ export class UserComponent implements OnInit {
     }
   }
 
-  userEdit(user, i) {
+  userEdit(user) {
     //alert(task.decription);
     //$("#taskModal").modal('show');
     this.showAddWindow();
@@ -172,7 +172,7 @@ export class UserComponent implements OnInit {
     //this.assignedToUserId = task.assignedto;
 
     this.registerForm.setValue({
-      index: i,
+      index: user.user_id,
       user_id: user.user_id,
       email: user.user_email,
       contactno: user.contact_no,
@@ -184,6 +184,25 @@ export class UserComponent implements OnInit {
     //this.registerForm.controls.taskpriorities.patchValue(this.taskpriorities[0].id);
   }
 
-  //To verify password & confirm password are same.
+  //This is for search.
+  name: any;
+  searchUser() {
+    if (this.name == "") {
+      this.ngOnInit();
+    }
+    else {
+      this.users = this.users.filter(res => {
+        return res.user_name.toLocaleLowerCase().match(this.name.toLocaleLowerCase());
+      });
+    }
+  }
+
+  //This is for sorting.
+  key: string = "user_name";
+  reverse: boolean = false;
+  sort(key) {
+    this.key = key;
+    this.reverse = !this.reverse;
+  }
 }
 

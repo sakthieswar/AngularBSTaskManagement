@@ -12,3 +12,10 @@ export class Task {
   statusid: number;
   priorityid: number;
 }
+
+export class Attachment {
+  id: number;
+  task_id: number;
+  filename: string;
+  filepath: string;
+}

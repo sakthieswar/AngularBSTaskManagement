@@ -37,4 +37,27 @@ export class OrderService {
         //console.log(this.user);
       }));
   }
+
+  public saveOrder(data) {
+    let uploadURL = this.REST_API_SERVER + 'addneworder.php';
+    return this.http.post<any>(uploadURL, data);
+  }
+
+  public getAllOrderList(): Observable<Order[]> {
+    // alert(this.REST_API_SERVER + 'read.php');
+
+    return this.http.get(this.REST_API_SERVER + 'getAllOrders.php').pipe(
+      // return this._http.get('http://localhost/read.php').pipe(
+      map((res) => {
+        this.orders = res['data'];
+        return this.orders;
+      }),
+      catchError(this.handleError));
+  }
+  private handleError(error: HttpErrorResponse) {
+    console.log(error);
+
+    // return an observable with a user friendly message
+    return throwError('Error! something went wrong.');
+  }
 }

@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpParams, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { Task } from '../entities/task';
+import { Task, Attachment } from '../entities/task';
 import { TaskPriority } from '../entities/task_priority';
 import { environment } from 'src/environments/environment';
 
@@ -16,6 +16,7 @@ export class TaskService {
   tasks: Task[];
   taskpriorities: TaskPriority[];
   taskstatus: TaskPriority[];
+  attachments: Attachment[];
 
 
   constructor(private http: HttpClient,
@@ -82,6 +83,18 @@ export class TaskService {
       map((res) => {
         this.tasks = res['data'];
         return this.tasks;
+      }),
+      catchError(this.handleError));
+  }
+
+  public getAllTaskAttachmentList(task_id: number): Observable<Attachment[]> {
+    // alert(this.REST_API_SERVER + 'read.php');
+
+    return this.http.get(this.REST_API_SERVER + 'getTaskAttachments.php?task_id=' + task_id).pipe(
+      // return this._http.get('http://localhost/read.php').pipe(
+      map((res) => {
+        this.attachments = res['data'];
+        return this.attachments;
       }),
       catchError(this.handleError));
   }
