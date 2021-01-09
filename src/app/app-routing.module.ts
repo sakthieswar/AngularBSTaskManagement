@@ -7,6 +7,7 @@ import { TaskComponent } from './modules/task/task.component';
 import { OrderComponent } from './modules/order/order.component';
 import { LoginComponent } from './modules/login/login.component';
 import { HomeComponent } from './modules/home/home.component';
+import { ReportsComponent } from './modules/reports/reports.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -14,7 +15,8 @@ const routes: Routes = [
   { path: 'admin', component: AdminComponent },
   { path: 'user', component: UserComponent },
   { path: 'task', component: TaskComponent },
-  { path: 'order', component: OrderComponent }
+  { path: 'order', component: OrderComponent },
+  { path: 'report', component: ReportsComponent }
 ];
 
 @NgModule({
