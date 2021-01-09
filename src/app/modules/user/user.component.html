@@ -1,7 +1,109 @@
 
-<div class="container-fluid">
-  <h1 class="mt-4">Simple Sidebar</h1>
-  <p>User user user user user, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will change.</p>
-  <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>. The top navbar is optional, and just for demonstration. Just create an element with the <code>#menu-toggle</code> ID which will toggle the menu when clicked.</p>
+<div class="row padding-0">
+  <div class="col-lg-2">
+    <app-side></app-side>
+  </div>
+  <div class="col-lg-10">
+    <div class="mt-4">
+      <a class="btn btn-success" *ngIf="isAddEditForm==false" href="#" style="float:right;" data-toggle="modal" (click)="showAddWindow()">
+        Add User
+      </a>
+      <a class="btn btn-success" *ngIf="isAddEditForm==true" href="#" style="float:right;" data-toggle="modal" (click)="showUserListWindow()">
+        Back to task list
+      </a>
+    </div>
+    <div *ngIf="isAddEditForm==false">
+      <form>
+        <div class="form-group form-inline">
+          <input class="form-control ml-2" type="text" name="name" [(ngModel)]="name" (ngModelChange)="searchUser()" placeholder="Please enter task name to filter." />
+        </div>
+
+        <table class="table table-striped table-border">
+          <thead>
+            <tr>
+              <th style="width:10%; cursor:pointer;" (click)="sort('user_id')"># &nbsp; <i class="fa fa-sort"></i></th>
+              <th style="width:10%; cursor:pointer;" (click)="sort('user_name')">Name &nbsp; <i class="fa fa-sort"></i></th>
+              <th scope="col">Email</th>
+              <th scope="col">Contact No</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let user of users | orderBy: key: reverse | paginate: { itemsPerPage: 5, currentPage: p }">
+              <th scope="row">{{ user.user_id }}</th>
+              <td>
+                {{ user.user_name }}
+                <!--<ngb-highlight [result]="user.user_name"></ngb-highlight>-->
+              </td>
+              <td>{{ user.user_email }}</td>
+              <td>{{ user.contact_no }}</td>
+              <td>
+                <a class="btn btn-success" (click)="userEdit(user, i)">Edit</a>
+                <a class="btn btn-danger" href="#">Delete</a>
+              </td>
+            </tr>
+          </tbody>
+          <pagination-controls (pageChange)="p = $event"></pagination-controls>
+        </table>
+
+        <!--<div class="d-flex justify-content-between p-2">
+        <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="service.page" [pageSize]="service.pageSize">
+        </ngb-pagination>
+
+        <select class="custom-select" style="width: auto" name="pageSize" [(ngModel)]="service.pageSize">
+          <option [ngValue]="2">2 items per page</option>
+          <option [ngValue]="4">4 items per page</option>
+          <option [ngValue]="6">6 items per page</option>
+        </select>
+      </div>-->
+
+      </form>
+    </div>
+    <div *ngIf="isAddEditForm==true">
+      <h1>User Registeration!</h1>
+      <form [formGroup]="registerForm" (ngSubmit)="SaveUser()">
+        <input type="hidden" name="_token" value="">
+
+        <label for="username">Username</label>
+        <input type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': r.username.errors }" />
+        <div *ngIf="r.username.errors" class="invalid-feedback">
+          <div *ngIf="r.username.errors.required">Username is required</div>
+        </div>
+        <label for="email">Email</label>
+        <input type="email" formControlName="email" class="form-control" [ngClass]="{ 'is-invalid': r.email.errors }" />
+        <div *ngIf="r.email.errors" class="invalid-feedback">
+          <div *ngIf="r.email.errors.required">Email is required.</div>
+          <div *ngIf="r.email.errors.email">Email should be in proper format.</div>
+        </div>
+        <div class="form-group" *ngIf="isEditForm==false">
+          <label for="password">Password</label>
+          <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': r.password.errors }" />
+          <div *ngIf="r.password.errors" class="invalid-feedback">
+            <div *ngIf="r.password.errors.required">Password is required</div>
+          </div>
+        </div>
+        <div class="form-group" *ngIf="isEditForm==false">
+          <label for="cpassword">Confirm Password</label>
+          <input type="password" formControlName="cpassword" class="form-control" [ngClass]="{ 'is-invalid': registerForm.hasError('notSame') }" />
+          <div *ngIf="registerForm.hasError('notSame')" class="invalid-feedback">
+            <div *ngIf="registerForm.hasError('notSame')">Password & confirm password are should be match</div>
+          </div>
+        </div>
+
+        <label for="contactno">Contact no</label>
+        <input type="text" formControlName="contactno" class="form-control" />
+
+
+        <div class="form-group">
+          <div>
+            <input type="submit" class="btn btn-success" value="Register" />
+
+          </div>
+        </div>
+      </form>
+
+    </div>
+  </div>
 </div>
+
 

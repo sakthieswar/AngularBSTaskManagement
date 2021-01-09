@@ -1,0 +1,94 @@
+<!-- The Modal -->
+<div class="modal show" id="orderModal">
+  <div class="modal-dialog" style="width:1250px;">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Order Registeration</h4>
+        <button type="button" class="close" (click)="hideModalorder()">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="">
+          <div>
+            <h1>Order Registeration!</h1>
+            <form [formGroup]="registerForm" (ngSubmit)="onSave()">
+              <input type="hidden" name="_token" value="">
+              <div class="form-group">
+                <label for="name">Product Name</label>
+                <input type="text" formControlName="name" class="form-control" [ngClass]="{ 'is-invalid': r.name.errors }" />
+                <div *ngIf="r.name.errors" class="invalid-feedback">
+                  <div *ngIf="r.name.errors.required">Product name is required</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="order_no">Order No</label>
+                <input type="text" formControlName="order_no" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="sku_id">SKUID</label>
+                <input type="text" formControlName="sku_id" class="form-control" [ngClass]="{ 'is-invalid': r.sku_id.errors }" />
+
+              </div>
+              <div class="form-group">
+                <label for="inovice_no">Invoice No</label>
+                <input type="text" formControlName="inovice_no" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="customer_name">Customer Name</label>
+                <input type="text" formControlName="customer_name" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="customer_email">Customer Email</label>
+                <input type="email" formControlName="customer_email" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="customer_contact_no">Customer Contact No</label>
+                <input type="text" formControlName="customer_contact_no" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="order_date">Order Date</label>
+                <input type="date" formControlName="order_date" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="description">Description</label>
+                <input type="text" formControlName="description" class="form-control" [ngClass]="{ 'is-invalid': r.description.errors }" />
+                <div *ngIf="r.description.errors" class="invalid-feedback">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="assigned_to">Assigned To</label>
+                <input type="text" formControlName="assigned_to" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="platform">Platform</label>
+                <input type="text" formControlName="platform" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label for="order_status">Order Status</label>
+                <input type="text" formControlName="order_status" class="form-control" />
+              </div>
+              <div class="form-group">
+                <div>
+                  <input type="submit" class="btn btn-success" value="Save" />
+                </div>
+              </div>
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-primary" (click)="sendModal()" >Send</button>
+        <button type="button" class="btn btn-danger" (click)="hideModal()">Close</button>-->
+        <!-- this button is hidden, used to close from typescript -->
+        <button type="button" id="close-modal" data-dismiss="modal" style="display: none">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -8,6 +8,8 @@
 .row {
   margin-top: 4%;
   min-height: 480px;
+  margin-right:0px !important;
+  margin-left:0px !important;
 }
 
 body {
