@@ -18,7 +18,7 @@ export class UserComponent implements OnInit {
   public error;
 
   isAddEditForm: boolean = false;
-  isEditForm: boolean = false;
+  isNewForm: boolean = true;
   uploadResponse;
 
   constructor(
@@ -52,6 +52,9 @@ export class UserComponent implements OnInit {
     }, { validator: this.checkPasswords });
   }
 
+
+
+
   checkPasswords(group: FormGroup) {
     let pass = group.get('password').value;
     let confirmPass = group.get('cpassword').value;
@@ -78,6 +81,7 @@ export class UserComponent implements OnInit {
   showAddWindow() {
     this.isAddEditForm = true;
     this.resetForm();
+    this.isNewForm = true;
   }
   resetForm() {
     this.registerForm.reset();
@@ -164,8 +168,8 @@ export class UserComponent implements OnInit {
   userEdit(user) {
     //alert(task.decription);
     //$("#taskModal").modal('show');
-    this.showAddWindow();
-    this.isEditForm = true;
+    this.isAddEditForm = true;
+    this.isNewForm = false;
     //document.getElementById('taskModal').show();
     //document.getElementById('').
 
@@ -204,5 +208,6 @@ export class UserComponent implements OnInit {
     this.key = key;
     this.reverse = !this.reverse;
   }
+
 }
 

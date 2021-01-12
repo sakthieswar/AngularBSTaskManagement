@@ -53,6 +53,7 @@ export class HomeComponent implements OnInit {
         data => {
           //this.router.navigate(['/user']);
           this.isvaliduser = true;
+          window.location.reload();
           //this.isl.isLogin = true;
           //this.router.navigateByUrl('admin');
 

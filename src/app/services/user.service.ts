@@ -30,10 +30,12 @@ export class UserService {
       .pipe(map(res => {
         //alert(res['data']);
         this.user = res['data'];
-        this.user = res['data'];
-        console.log(this.user[0].user_id);
+        //this.user = res['data'];
+        console.log(this.user[0].user_name);
         localStorage.setItem('user', this.user[0].user_id.toString());
         localStorage.setItem('role', this.user[0].role.toString());
+        localStorage.setItem('username', this.user[0].user_name.toString());
+        //alert(localStorage.getItem('username'));
 
 
         //alert(this.user[0].user_id);

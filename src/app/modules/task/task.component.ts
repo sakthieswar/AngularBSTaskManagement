@@ -40,13 +40,14 @@ export class TaskComponent implements OnInit {
 
   isFileChanged: boolean = false;
 
-  selectedAssigneeID: number;
-  selectedTaskPriorityID: number;
-  selectedTaskStatusID: number;
+  selectedAssigneeID: number = 1;
+  selectedTaskPriorityID: number = 1;
+  selectedTaskStatusID: number = 1;
 
   isAdminRole: boolean = false;
   isTaskCompleted: boolean = false;
   todayDate = new Date().toISOString();
+  user_id: string;
 
   currentRate: number = 0;
 
@@ -58,8 +59,8 @@ export class TaskComponent implements OnInit {
     private taskService: TaskService,
     private userService: UserService) {
     //this.todayDate = this.datePipe.transform(this.todayDate, 'M/d/yy h:mm a');
-    this.todayDate = this.datePipe.transform(this.todayDate, 'yyyy/M/d h:mm:ss');
-    }
+    this.todayDate = this.datePipe.transform(this.todayDate, 'yyyy/M/d hh:mm:ss');
+  }
 
   ngOnInit(): void {
     //alert(this.todayDate);
@@ -67,24 +68,29 @@ export class TaskComponent implements OnInit {
     let loginrole = JSON.parse(localStorage.getItem('role'));
     if (user == null) {
       this.router.navigateByUrl('home');
-    } else if (loginrole == 1) {
-      this.isAdminRole = true;
-      this.getAllTasks();
+    }else {
+      this.getAllTaskPriority();
+      this.getAllTaskStatus();
       this.getAllUserList();
-      //getUserAllTaskList
-    } else if (loginrole != 1) {
-      this.getAllUserTasks(user);
-    }
-    this.getAllTaskPriority();
-    this.getAllTaskStatus();
-    this.getAllUserList();
-    this.generateFormControls();
-    this.isAddEditForm = false;
-    this.isTaskCompleted = false;
+      this.generateFormControls();
+      this.isAddEditForm = false;
+      this.isTaskCompleted = false;
+      this.user_id = user;
 
-    this.selectedAssigneeID = 1;
-    this.selectedTaskPriorityID = 1;
-    this.selectedTaskStatusID = 1;
+      //this.selectedAssigneeID = 1;
+      //this.selectedTaskPriorityID = 1;
+      //this.selectedTaskStatusID = 1;
+      if (loginrole == 1) {
+        this.isAdminRole = true;
+        this.getAllTasks();
+        this.getAllUserList();
+        //getUserAllTaskList
+      } else {
+        this.getAllUserTasks(user);
+      }
+    }
+
+
 
   }
 
@@ -224,28 +230,32 @@ export class TaskComponent implements OnInit {
     const formData = new FormData();
 
     let index = this.registerForm.getRawValue().index;
-    //alert(this.todayDate);
+    //alert(this.user_id);
 
     formData.append('name', this.registerForm.get('name').value);
     formData.append('description', this.registerForm.get('description').value);
     formData.append('attachment', this.registerForm.get('attachment').value);
     formData.append('priority', this.priorityId);
-    //formData.append('startdate', this.registerForm.get('startdate').value);
-    formData.append('startdate', this.todayDate);
+    formData.append('startdate', this.registerForm.get('startdate').value);
+    //formData.append('startdate', this.todayDate);
     formData.append('enddate', this.registerForm.get('enddate').value);
     formData.append('status', this.statusId);
     formData.append('assignedto', this.assignedToUserId);
+    formData.append('created_by', this.user_id);
+    
 
     if (index != null) {
       //alert(' task id: ' + this.registerForm.get('task_id').value);
       formData.append('task_id', this.registerForm.get('task_id').value);
+      formData.append('workhours', this.registerForm.get('workhours').value);
 
       this.taskService.updateTask(formData)
         .subscribe(
           (res) => {
             this.uploadResponse = res;
             alert('You have successfully updated the task: ' + this.registerForm.get('name').value);
-            this.router.navigate(['/task']);
+            //this.router.navigate(['/task']);
+            window.location.reload();
             //this.hideModals();
             //console.log(res);
           },
@@ -262,7 +272,8 @@ export class TaskComponent implements OnInit {
           (res) => {
             this.uploadResponse = res;
             alert('You have successfully added task: ' + this.registerForm.get('name').value);
-            this.router.navigate(['/task']);
+            //this.router.navigate(['/task']);
+            window.location.reload();
             //this.hideModals();
             //console.log(res);
           },

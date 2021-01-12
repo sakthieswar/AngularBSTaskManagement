@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpParams, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { Order } from '../entities/order';
+import { Order, OrderStatus } from '../entities/order';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -14,6 +14,7 @@ export class OrderService {
   private REST_API_SERVER = environment.baseUrl;
   order: Order;
   orders: Order[];
+  orderstatus: OrderStatus[];
 
   constructor(private http: HttpClient,
     private router: Router,
@@ -44,13 +45,21 @@ export class OrderService {
   }
 
   public getAllOrderList(): Observable<Order[]> {
-    // alert(this.REST_API_SERVER + 'read.php');
 
     return this.http.get(this.REST_API_SERVER + 'getAllOrders.php').pipe(
-      // return this._http.get('http://localhost/read.php').pipe(
       map((res) => {
         this.orders = res['data'];
         return this.orders;
+      }),
+      catchError(this.handleError));
+  }
+
+  public getAllOrderStatusList(): Observable<OrderStatus[]> {
+
+    return this.http.get(this.REST_API_SERVER + 'getAllOrderStatus.php').pipe(
+      map((res) => {
+        this.orderstatus = res['data'];
+        return this.orderstatus;
       }),
       catchError(this.handleError));
   }

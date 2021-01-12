@@ -108,11 +108,11 @@
           </div>
           <div class="form-group">
             <label for="startdate">Start Date</label>
-            <input type="date" formControlName="startdate" class="form-control" />
+            <input type="datetime-local" formControlName="startdate" class="form-control" />
           </div>
           <div class="form-group">
             <label for="enddate">Deadline</label>
-            <input type="date" formControlName="enddate" class="form-control" />
+            <input type="datetime-local" formControlName="enddate" class="form-control" />
           </div>
           <div class="form-group">
             <label for="status">Status</label>
@@ -125,14 +125,13 @@
             </select>
           </div>
           <div class="form-group" *ngIf="isTaskCompleted==true">
-            <label for="enddate">Work Hours</label>
+            <label for="workhours">Work Hours</label>
             <input type="number" formControlName="workhours" class="form-control" />
           </div>
 
           <div class="form-group">
             <div>
               <input type="submit" class="btn btn-success" value="Save" />
-
             </div>
           </div>
         </form>
@@ -167,7 +166,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let attachment of attachments | orderBy: key: reverse | paginate: { itemsPerPage: 5, currentPage: p }">
+                <tr *ngFor="let attachment of attachments">
                   <td>{{ attachment.id }}</td>
                   <td>
                     <a href="{{attachment.filepath}}" target="_blank" download="w3logo" (click)="download(attachment.filepath)">
@@ -176,13 +175,12 @@
                   </td>
                   <td>
                     <a class="btn btn-success">Remove</a>
-                    <!--<a class="btn btn-danger" href="#">Delete</a>-->
                   </td>
                 </tr>
               </tbody>
-
+              <!--<pagination-controls (pageChange)="q = $event"></pagination-controls>-->
             </table>
-            <pagination-controls (pageChange)="p = $event"></pagination-controls>
+            
           </div>
         </div>
       </div>
