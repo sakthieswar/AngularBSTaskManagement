@@ -105,7 +105,7 @@ export class TaskService {
   }
 
   public updateTask(data) {
-    let uploadURL = this.REST_API_SERVER + 'updatetask.php';
+    let uploadURL = this.REST_API_SERVER + 'updatetaskwithattachment.php';
     return this.http.post<any>(uploadURL, data);
   }
 

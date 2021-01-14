@@ -9,3 +9,18 @@
 .Low {
   color: green;
 }
+
+.message {
+  background-color: red !important;
+  color: white;
+}
+
+.warn {
+  background-color: #ffc107 !important;
+  color: white;
+}
+
+.error {
+  background-color: green !important;
+  color: white;
+}

@@ -46,10 +46,12 @@ export class TaskComponent implements OnInit {
 
   isAdminRole: boolean = false;
   isTaskCompleted: boolean = false;
+  isEditScreen: boolean = false;
   todayDate = new Date().toISOString();
   user_id: string;
 
   currentRate: number = 0;
+
 
   constructor(
     private formBuilder: FormBuilder,
@@ -68,7 +70,7 @@ export class TaskComponent implements OnInit {
     let loginrole = JSON.parse(localStorage.getItem('role'));
     if (user == null) {
       this.router.navigateByUrl('home');
-    }else {
+    } else {
       this.getAllTaskPriority();
       this.getAllTaskStatus();
       this.getAllUserList();
@@ -242,7 +244,7 @@ export class TaskComponent implements OnInit {
     formData.append('status', this.statusId);
     formData.append('assignedto', this.assignedToUserId);
     formData.append('created_by', this.user_id);
-    
+
 
     if (index != null) {
       //alert(' task id: ' + this.registerForm.get('task_id').value);
@@ -292,6 +294,8 @@ export class TaskComponent implements OnInit {
     //alert(task.assignedto);
     //$("#taskModal").modal('show');
     this.showAddWindow();
+    this.isEditScreen = true;
+    this.getTaskAttachments(task.task_id);
 
     this.selectedAssigneeID = task.assigned_to_userid;
     this.selectedTaskPriorityID = task.task_priority_id;
@@ -322,11 +326,13 @@ export class TaskComponent implements OnInit {
   }
   showTaskListWindow() {
     this.isAddEditForm = false;
+    this.isEditScreen = false;
   }
 
   resetForm() {
     this.registerForm.reset();
     this.isFileChanged = false;
+    this.isEditScreen = false;
   }
 
   //This is for search.
@@ -353,7 +359,7 @@ export class TaskComponent implements OnInit {
   //This is for downloading.
   download(url: string): Observable<Blob> {
     //alert(url);
-    return this.download(url);
+    return this.taskService.download(url);
   }
 
   //download(url: string): void {
@@ -373,6 +379,18 @@ export class TaskComponent implements OnInit {
   hideModalAttachments(): void {
     document.getElementById('TaskAttachmentModal').click();
   }
+
+
+getDataDiff(startDate, endDate) {
+  var diff = endDate.getTime() - startDate.getTime();
+  var days = Math.floor(diff / (60 * 60 * 24 * 1000));
+  var hours = Math.floor(diff / (60 * 60 * 1000)) - (days * 24);
+  var minutes = Math.floor(diff / (60 * 1000)) - ((days * 24 * 60) + (hours * 60));
+  var seconds = Math.floor(diff / 1000) - ((days * 24 * 60 * 60) + (hours * 60 * 60) + (minutes * 60));
+  console.log( { day: days, hour: hours, minute: minutes, second: seconds });
+}
+//var diff = getDataDiff(new Date(inputJSON.created_date), new Date(inputJSON.current_time));
+//console.log(diff);
 
 
 }

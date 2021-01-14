@@ -11,6 +11,7 @@ export class Task {
   assignedtouserid: number;
   statusid: number;
   priorityid: number;
+  taskremainingtime: number;
 }
 
 export class Attachment {

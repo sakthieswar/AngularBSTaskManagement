@@ -202,7 +202,7 @@ export class UserComponent implements OnInit {
   }
 
   //This is for sorting.
-  key: string = "user_name";
+  key: string = "task_id";
   reverse: boolean = false;
   sort(key) {
     this.key = key;
