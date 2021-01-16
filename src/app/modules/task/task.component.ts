@@ -157,7 +157,7 @@ export class TaskComponent implements OnInit {
     this.statusId = event.target['options']
     [event.target['options'].selectedIndex].value;
     //alert(this.statusName);
-    if (this.statusName == "Completed") {
+    if (this.statusName == "Completed" || this.statusName == "In Progress") {
       this.isTaskCompleted = true;
     } else {
       this.isTaskCompleted = false;

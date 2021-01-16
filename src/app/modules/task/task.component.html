@@ -47,15 +47,13 @@
                 {{task.task_attachment}}
               </a>
                           </td>-->
-              <td>
-                <span [ngClass]="task.priority">{{ task.priority }}</span>
-              </td>
-              <!--<td>{{ task.priority }}</td>-->
+              <!--<td><span [ngClass]="task.priority">{{ task.priority }}</span></td>-->
+              <td>{{ task.priority }}</td>
               <td>{{ task.task_startdate }}</td>
               <td>{{ task.task_enddate }}</td>
               <td>{{ task.task_status_name }}</td>
               <td>
-                <a class="btn btn-success" (click)="taskEdit(task)">Edit</a>
+                <a class="btn btn-success" ng-disabled="task.task_status_name == 'Completed'"  (click)="taskEdit(task)">Edit</a>
                 <!--<a class="btn btn-danger" href="#">Delete</a>-->
               </td>
               <!--<td><ngb-highlight [result]="user.user_email"></ngb-highlight></td>
@@ -105,28 +103,6 @@
                 {{attachment.filename}}
               </a>
             </div>
-            <!--<table class="table table-striped table-border bordered">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>File</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let attachment of attachments">
-                  <td>{{ attachment.id }}</td>
-                  <td>
-                    <a href="{{attachment.filepath}}" target="_blank" download="w3logo" (click)="download(attachment.filepath)">
-                      {{attachment.filename}}
-                    </a>
-                  </td>
-                  <td>
-                    <a class="btn btn-success">Remove</a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>-->
           </div>
           <div class="form-group">
             <label for="priority">Priority</label>
@@ -149,11 +125,17 @@
           <div class="form-group">
             <label for="status">Status</label>
             <!--<input type="text" formControlName="status" class="form-control" />-->
-            <select class="form-control" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
+            <select *ngIf ="isEditScreen==true" class="form-control" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
               <option value="">Please select status</option>
               <option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
                 {{taskstatuslist[i].name}}
               </option>
+            </select>
+            <select *ngIf ="isEditScreen==false" class="form-control" disabled="disabled" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
+              <option value="{{selectedTaskStatusID}}">New</option>
+              <!--<option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
+                {{taskstatuslist[i].name}}
+              </option>-->
             </select>
           </div>
           <div class="form-group" *ngIf="isTaskCompleted==true">
