@@ -4,29 +4,72 @@
   </div>
   <div class="col-lg-10">
     <div class="mt-4">
-      <form class="form-inline">
+      <form class="form-inline" [formGroup]="taskSearchForm" (ngSubmit)="GetTaskReportData()">
         <div class="form-group mb-2">
-          <label for="staticEmail2">Assigned To</label>
-          <input type="text" class="form-control" id="staticEmail2" value="email@example.com">
+          <label for="priority">Assigned To</label>
+          <select class="form-control" formControlName="assignedToUserName" (change)="changeAssignedToUser($event)" id="assignedTolist">
+            <option value="">Please select assignee</option>
+            <option *ngFor="let assigneduser of assignedTolist; let i = index" [value]="assignedTolist[i].user_id">
+              {{assignedTolist[i].user_name}}
+            </option>
+          </select>
         </div>
         <div class="form-group mx-sm-3 mb-2">
-          <label for="inputPassword2">Task Status</label>
-          <input type="text" class="form-control" id="inputPassword2" placeholder="Password">
+          <label for="statusName">Task Status</label>
+          <select class="form-control" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
+            <option value="">Please select status</option>
+            <option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
+              {{taskstatuslist[i].name}}
+            </option>
+          </select>
+        </div>
+        <div class="form-group mx-sm-3 mb-2">
+          <label for="startdate">Start Date</label>
+          <input type="datetime-local" formControlName="startdate" class="form-control" />
         </div>
         <button type="submit" class="btn btn-primary mb-2">Get Task</button>
       </form>
       <br />
-      <form class="form-inline">
-        <div class="form-group mb-2">
-          <label for="staticEmail2">Assigned To</label>
-          <input type="text" class="form-control" id="staticEmail2" value="email@example.com">
-        </div>
-        <div class="form-group mx-sm-3 mb-2">
-          <label for="inputPassword2">Task Status</label>
-          <input type="text" class="form-control" id="inputPassword2" placeholder="Password">
-        </div>
-        <button type="submit" class="btn btn-primary mb-2">Get Orders</button>
-      </form>
+      <!--<form class="form-inline">
+      <div class="form-group mb-2">
+        <label for="staticEmail2">Assigned To</label>
+        <input type="text" class="form-control" id="staticEmail2" value="email@example.com">
+      </div>
+      <div class="form-group mx-sm-3 mb-2">
+        <label for="inputPassword2">Task Status</label>
+        <input type="text" class="form-control" id="inputPassword2" placeholder="Password">
+      </div>
+      <button type="submit" class="btn btn-primary mb-2">Get Orders</button>
+    </form>-->
     </div>
+
+    <div>
+      <table class="table table-striped table-border bordered">
+        <thead>
+          <tr>
+            <th style="width:10%;">#</th>
+            <th style="width:10%;">Title &nbsp; <i class="fa fa-sort"></i></th>
+            <th style="width:10%;">Assigned To &nbsp; <i class="fa fa-sort"></i></th>
+            <th style="width:10%;">Priority &nbsp; <i class="fa fa-sort"></i></th>
+            <th style="width:10%;">Start Date</th>
+            <th style="width:10%;">Deadline</th>
+            <th style="width:10%;">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let task of tasks" [ngClass]="{'message': task.taskremainingtime < 0, 'warn': task.taskremainingtime > 1 && task.taskremainingtime < 30, 'error': task.taskremainingtime > 30}">
+            <td>{{ task.task_id }}</td>
+            <td>{{ task.name }}</td>
+            <td>{{ task.assignedto }}</td>
+            <td>{{ task.priority }}</td>
+            <td>{{ task.task_startdate }}</td>
+            <td>{{ task.task_enddate }}</td>
+            <td>{{ task.task_status_name }}</td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+
   </div>
 </div>

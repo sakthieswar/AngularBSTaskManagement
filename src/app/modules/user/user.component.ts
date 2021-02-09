@@ -20,6 +20,8 @@ export class UserComponent implements OnInit {
   isAddEditForm: boolean = false;
   isNewForm: boolean = true;
   uploadResponse;
+  isAdminRole: boolean = false;
+  user_id: string;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -29,13 +31,18 @@ export class UserComponent implements OnInit {
 
   ngOnInit(): void {
     let user = JSON.parse(localStorage.getItem('user'));
+    let loginrole = JSON.parse(localStorage.getItem('role'));
     if (user == null) {
       this.router.navigateByUrl('home');
     }
     else {
       this.isAddEditForm = false;
+      this.user_id = user;
       this.getAllUsers();
       this.generateFormControls();
+      if (loginrole == 1) {
+        this.isAdminRole = true;
+      }      
     }
 
   }
@@ -123,7 +130,7 @@ export class UserComponent implements OnInit {
     formData.append('password', this.registerForm.get('password').value);
     formData.append('contactno', this.registerForm.get('contactno').value);
     formData.append('isactive', "1");
-    formData.append('created_by', "1");
+    formData.append('created_by', this.user);
     formData.append('created_date', "");
 
     if (index != null) {
@@ -134,8 +141,9 @@ export class UserComponent implements OnInit {
         .subscribe(
           (res) => {
             this.uploadResponse = res;
-            alert('You have successfully added user: ' + this.registerForm.get('username').value);
-            this.router.navigate(['/user']);
+            alert('You have successfully updated the user: ' + this.registerForm.get('username').value);
+            //this.router.navigate(['/user']);
+            window.location.reload();
             //this.hideModals();
             //console.log(res);
           },
@@ -152,8 +160,9 @@ export class UserComponent implements OnInit {
         .subscribe(
           (res) => {
             this.uploadResponse = res;
-            alert('You have successfully updated the user: ' + this.registerForm.get('username').value);
-            this.router.navigate(['/user']);
+            alert('You have successfully added the user: ' + this.registerForm.get('username').value);
+            //this.router.navigate(['/user']);
+            window.location.reload();
             //this.hideModals();
             //console.log(res);
           },

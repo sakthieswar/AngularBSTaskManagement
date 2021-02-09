@@ -35,6 +35,7 @@ export class LoginComponent implements OnInit {
   onSave() {
 
     //this.router.navigateByUrl('admin');
+    alert(this.l.useremail.value);
     this.authenticationService.login(this.l.useremail.value, this.l.password.value)
       .pipe(first())
       .subscribe(

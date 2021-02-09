@@ -21,6 +21,6 @@
 }
 
 .error {
-  background-color: green !important;
-  color: white;
+  background-color: white !important;
+  color: black;
 }

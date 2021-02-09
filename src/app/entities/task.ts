@@ -20,3 +20,11 @@ export class Attachment {
   filename: string;
   filepath: string;
 }
+
+export class TaskLogs {
+  id: number;
+  task_id: number;
+  description: string;
+  createdBy: string;
+  createdDate: string;
+}

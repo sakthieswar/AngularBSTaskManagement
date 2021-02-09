@@ -28,7 +28,7 @@ export class UserService {
       headers: headerOptions
     })
       .pipe(map(res => {
-        //alert(res['data']);
+        alert(res['data']);
         this.user = res['data'];
         //this.user = res['data'];
         console.log(this.user[0].user_name);
