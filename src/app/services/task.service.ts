@@ -109,6 +109,15 @@ export class TaskService {
       catchError(this.handleError));
   }
 
+  public getTaskDetailsByID(task_id: number): Observable<Task> {
+    return this.http.get(this.REST_API_SERVER + 'getTaskDetailByID.php?task_id=' + task_id).pipe(
+      map((res) => {
+        this.task = res['data'];
+        return this.task;
+      }),
+      catchError(this.handleError));
+  }
+
   public saveTask(data) {
     let uploadURL = this.REST_API_SERVER + 'addnewtaskwithattachment.php';
     return this.http.post<any>(uploadURL, data);

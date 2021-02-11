@@ -16,6 +16,7 @@
         <h3>Tasks:</h3>
         <div class="form-group form-inline">
           <input class="form-control ml-2" type="text" name="name" [(ngModel)]="name" (ngModelChange)="searchTask()" placeholder="Please enter task name to filter." />
+          <input class="form-control ml-2" type="text" name="name" [(ngModel)]="task_display_id" (ngModelChange)="searchTask()" placeholder="Please enter task id to filter." />
         </div>
         <table class="table table-striped table-border bordered">
           <thead>
@@ -35,7 +36,7 @@
           <tbody>
             <!--<tr *ngFor="let task of tasks  | paginate: { itemsPerPage: 5, currentPage: p }" [ngClass]="{'message': task.taskremainingtime < 0, 'warn': task.taskremainingtime > 1 && task.taskremainingtime < 30, 'error': task.taskremainingtime > 30}">-->
             <tr *ngFor="let task of tasks | orderBy: key: reverse  | paginate: { itemsPerPage: 5, currentPage: p }" [ngClass]="{'message': task.taskremainingtime < 0, 'warn': task.taskremainingtime > 1 && task.taskremainingtime < 30, 'error': task.taskremainingtime > 30}">
-              <td>{{ task.task_id }}</td>
+              <td>{{ task.task_display_id }}</td>
               <td>{{ task.name }}</td>
               <td>{{ task.assignedto }}</td>
               <!--<td>{{ task.description }}</td>
@@ -54,9 +55,9 @@
               <td>{{ task.task_enddate }}</td>
               <td>{{ task.task_status_name }}</td>
               <td>
-                <a class="btn btn-success" ng-disabled="task.task_status_name == 'Completed'" (click)="taskEdit(task)">Edit</a>
-                <a class="btn btn-warning" href="#" (click)="getTaskLogs(task.task_id)" data-toggle="modal" data-target="#TaskLogsModal">Logs</a>
-                <a *ngIf="isAdminRole" class="btn btn-danger" href="#">Delete</a>
+                <a class="" ng-disabled="task.task_status_name == 'Completed'" (click)="taskEdit(task)"><img style="width:30px; height:30px;" src="./assets/images/edit.png" alt="Edit"></a>
+                <a class=" " href="#" (click)="getTaskWorkLog(task.task_id)" data-toggle="modal" data-target="#TaskLogsModal"><img style="width:30px; height:30px;" src="./assets/images/log.png" alt="Log"></a>
+                <a *ngIf="isAdminRole" class=" " href="#"><img style="width:30px; height:30px;" src="./assets/images/delete.png" alt="Delete"></a>
               </td>
               <!--<td><ngb-highlight [result]="user.user_email"></ngb-highlight></td>
               <td><ngb-highlight [result]="user.contact_no"></ngb-highlight></td>-->
@@ -123,22 +124,36 @@
 
           </div>
           <div class="form-group row">
-            <div class="col-sm-6">
+            <!--<div class="col-sm-6">
               <label for="startdate">Start Date</label>
               <input type="datetime-local" formControlName="startdate" class="form-control" />
-            </div>
+            </div>-->
             <div class="col-sm-6">
               <label for="enddate">Deadline</label>
               <input type="datetime-local" formControlName="enddate" class="form-control" />
+            </div>
+            <div class="col-sm-6">
+              <label for="status">Status</label>
+              <select *ngIf="isEditScreen==true" class="form-control" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
+                <option value="">Please select status</option>
+                <option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
+                  {{taskstatuslist[i].name}}
+                </option>
+              </select>
+              <select *ngIf="isEditScreen==false" class="form-control" disabled="disabled" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
+                <option value="{{selectedTaskStatusID}}">New</option>
+                <!--<option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
+                  {{taskstatuslist[i].name}}
+                </option>-->
+              </select>
             </div>
           </div>
           <!--<div class="form-group">
             <label for="enddate">Deadline</label>
             <input type="datetime-local" formControlName="enddate" class="form-control" />
           </div>-->
-          <div class="form-group">
+          <!--<div class="form-group">
             <label for="status">Status</label>
-            <!--<input type="text" formControlName="status" class="form-control" />-->
             <select *ngIf="isEditScreen==true" class="form-control" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
               <option value="">Please select status</option>
               <option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
@@ -147,11 +162,9 @@
             </select>
             <select *ngIf="isEditScreen==false" class="form-control" disabled="disabled" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
               <option value="{{selectedTaskStatusID}}">New</option>
-              <!--<option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
-                {{taskstatuslist[i].name}}
-              </option>-->
+              {{taskstatuslist[i].name}}
             </select>
-          </div>
+          </div>-->
           <div class="form-group" *ngIf="isTaskCompleted==true">
             <label for="workhours">Work Hours</label>
             <input type="number" formControlName="workhours" class="form-control" />
@@ -226,19 +239,49 @@
     <div class="modal-content">
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Task Worklogs</h4>
+        <h4 class="modal-title">{{taskDisplayID}} : {{taskTitle}}</h4>
         <button type="button" class="close" (click)="hideModalTaskLogs()">&times;</button>
       </div>
       <!-- Modal body -->
       <div class="modal-body">
         <div class="">
           <div>
-            <div *ngFor="let tasklog of tasklogs">
+            <div>
+              <span><strong>Assigned To: </strong>{{taskAssignedTo}}</span><br />
+              <span><strong>Priority: </strong>{{taskPriority}}</span><br />
+              <span><strong>Status: </strong>{{taskStatus}}</span><br />
+            </div>
+            <div>
+              <table class="table table-striped table-border bordered">
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th>Created By</th>
+                    <th>Created Date</th>
+                    <th>Attachment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let tasklog of tasklogs">
+                    <td>{{ tasklog.description }}</td>
+                    <td> {{tasklog.createdby}} </td>
+                    <td> {{tasklog.created_date}} </td>
+                    <td *ngIf="tasklog.filepath != ''">
+                      <a href="{{tasklog.filepath}}" target="_blank" download="w3logo" (click)="download(tasklog.filepath)">
+                        <img style="width:30px; height:30px;" src="./assets/images/download_icon.jpg" alt="solefitness">
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+                <!--<pagination-controls (pageChange)="q = $event"></pagination-controls>-->
+              </table>
+            </div>
+            <!--<div *ngFor="let tasklog of tasklogs">
               <h6><strong>{{tasklog.createdby}}</strong></h6>
               <h6><strong>{{tasklog.created_date}}</strong></h6>
               <p>Description:</p>
               <p>{{tasklog.description}}</p>
-            </div>
+            </div>-->
           </div>
         </div>
       </div>

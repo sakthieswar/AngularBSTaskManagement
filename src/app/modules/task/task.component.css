@@ -24,3 +24,6 @@
   background-color: white !important;
   color: black;
 }
+.table td, .table th {
+  padding: .0rem;
+}

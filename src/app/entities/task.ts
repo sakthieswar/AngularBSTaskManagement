@@ -1,5 +1,6 @@
 export class Task {
   task_id: number;
+  task_display_id: string;
   name: string;
   assignedto: string;
   description: string;

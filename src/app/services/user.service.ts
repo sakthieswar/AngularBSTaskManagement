@@ -96,6 +96,11 @@ export class UserService {
     return this.http.post<any>(uploadURL, data);
   }
 
+  //public deleteUser(user_d: string) {
+  //  let uploadURL = this.REST_API_SERVER + 'updateuser.php';
+  //  return this.http.delete<any>(uploadURL, user_d);
+  //}
+
   private handleError(error: HttpErrorResponse) {
     console.log(error);
 

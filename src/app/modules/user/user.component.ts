@@ -130,7 +130,7 @@ export class UserComponent implements OnInit {
     formData.append('password', this.registerForm.get('password').value);
     formData.append('contactno', this.registerForm.get('contactno').value);
     formData.append('isactive', "1");
-    formData.append('created_by', this.user);
+    formData.append('created_by', this.user_id);
     formData.append('created_date', "");
 
     if (index != null) {
