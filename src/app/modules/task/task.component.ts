@@ -27,6 +27,7 @@ export class TaskComponent implements OnInit {
   public error;
   isAddEditForm: boolean = false;
 
+  taskSearchForm: FormGroup;
   registerForm: FormGroup;
   taskpriorities: TaskPriority[];
   taskstatuslist: TaskPriority[];
@@ -123,6 +124,14 @@ export class TaskComponent implements OnInit {
       assignedToUserName: [''],
       workhours: ['']
     });
+
+    this.taskSearchForm = this.formBuilder.group({
+      taskstatuslist: [''],
+      assignedTolist: [''],
+      startdate: [],
+      statusName: [''],
+      assignedToUserName: ['']
+    });
   }
 
   getAllTaskPriority(): void {
@@ -193,6 +202,7 @@ export class TaskComponent implements OnInit {
   }
 
   get r() { return this.registerForm.controls; }
+  get s() { return this.taskSearchForm.controls; }
 
   getAllTasks(): void {
     this.taskService.getAllTaskList().subscribe(
@@ -416,21 +426,30 @@ export class TaskComponent implements OnInit {
   name: any;
   task_display_id: any;
   searchTask() {
-    if (this.name == "" && this.task_display_id == "") {
-      this.ngOnInit();
+    if (this.name == "") {
+      this.getAllTasks();
     }
-    else if (this.name != "") {
+    else {
       this.tasks = this.tasks.filter(res => {
         return res.name.toLocaleLowerCase().match(this.name.toLocaleLowerCase());
       });
-    } else if (this.task_display_id != "") {
+    }
+  }
+
+  searchTaskID() {
+    if (this.task_display_id == "") {
+      this.getAllTasks();
+    }
+    else {
       this.tasks = this.tasks.filter(res => {
         return res.task_display_id.toLocaleLowerCase().match(this.task_display_id.toLocaleLowerCase());
       });
     }
-    else {
-
-    }
+  }
+  clearSearch() {    
+    this.name = "";
+    this.task_display_id = "";
+    this.getAllTasks();
   }
 
   //This is for sorting.
@@ -479,6 +498,24 @@ export class TaskComponent implements OnInit {
   }
   //var diff = getDataDiff(new Date(inputJSON.created_date), new Date(inputJSON.current_time));
   //console.log(diff);
+  GetTaskReportData() {
+    let user_id = this.assignedToUserId == undefined ? '' : this.assignedToUserId;
+    let statusId = this.statusId == undefined ? '' : this.statusId;
+    let startdate = this.taskSearchForm.get('startdate').value;
+    startdate = startdate == null ? '' : startdate;
 
+    this.taskService.getFilteredTasks(user_id, statusId, startdate).subscribe(
+      (res: Task[]) => {
+        this.tasks = res;
+        if (this.tasks.length > 0) {
+
+        }
+        //console.log(this.tasks);
+      },
+      (err) => {
+        this.error = err;
+      }
+    )
+  }
 
 }
