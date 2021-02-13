@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { first } from 'rxjs/operators';
-import { Order } from '../../entities/order';
+import { Order, OrderStatus } from '../../entities/order';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { TaskPriority } from '../../entities/task_priority';
 import { User } from '../../entities/user';
 import { OrderService } from '../../services/order.service';
 import { Observable } from 'rxjs';
+
+import * as xlsx from 'xlsx'; //This is used to export the data into excel.
 
 declare var $: any;
 
@@ -17,7 +19,10 @@ declare var $: any;
 })
 export class OrderComponent implements OnInit {
 
+  @ViewChild('epltable', { static: false }) epltable: ElementRef;
+
   orders: Order[];
+  orderStatus: OrderStatus[];
   public error;
   isAddEditForm: boolean = false;
 
@@ -33,9 +38,14 @@ export class OrderComponent implements OnInit {
   assignedToUserId: string;
   uploadResponse;
 
+  orderStatusList: OrderStatus[];
+  orderStatusName: string;
+  orderStatusId: string;
+
   selectedAssigneeID: number;
   selectedTaskPriorityID: number;
   selectedTaskStatusID: number;
+  selectedOrderStatusID: number = 1;
 
   isAdminRole: boolean = false;
 
@@ -52,13 +62,23 @@ export class OrderComponent implements OnInit {
       this.router.navigateByUrl('home');
     } else {
       this.getAllOrders();
+      this.getAllOrderStatus();
       this.generateFormControls();
     }
+  }
+
+  exportToExcel() {
+    const ws: xlsx.WorkSheet =
+      xlsx.utils.table_to_sheet(this.epltable.nativeElement);
+    const wb: xlsx.WorkBook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+    xlsx.writeFile(wb, 'epltable.xlsx');
   }
 
   generateFormControls() {
     this.registerForm = this.formBuilder.group({
       name: [null, Validators.required],
+      orderStatusList: [''],
       description: [null],
       sku_id: [null],
       assigned_to: [null],
@@ -69,7 +89,8 @@ export class OrderComponent implements OnInit {
       customer_email: [null],
       customer_contact_no: [null],
       order_date: [null],
-      order_status: [null]
+      order_status: [null],
+      orderStatusName: ['']
     });
   }
 
@@ -77,6 +98,18 @@ export class OrderComponent implements OnInit {
     this.orderService.getAllOrderList().subscribe(
       (res: Order[]) => {
         this.orders = res;
+      },
+      (err) => {
+        this.error = err;
+      }
+    )
+  }
+
+  getAllOrderStatus(): void {
+    this.orderService.getAllOrderStatusList().subscribe(
+      (res: OrderStatus[]) => {
+        this.orderStatus = res;
+        console.log(this.orderStatus);
       },
       (err) => {
         this.error = err;
@@ -184,6 +217,14 @@ export class OrderComponent implements OnInit {
           }
         );
     }
+  }
+
+  changeStatus(event: Event) {
+    this.orderStatusName = event.target['options']
+    [event.target['options'].selectedIndex].text;
+    this.orderStatusId = event.target['options']
+    [event.target['options'].selectedIndex].value;
+    //alert(this.statusName);
   }
 
 }

@@ -1,5 +1,6 @@
 export class Task {
   task_id: number;
+  task_display_id: string;
   name: string;
   assignedto: string;
   description: string;
@@ -11,6 +12,7 @@ export class Task {
   assignedtouserid: number;
   statusid: number;
   priorityid: number;
+  taskremainingtime: number;
 }
 
 export class Attachment {
@@ -18,4 +20,12 @@ export class Attachment {
   task_id: number;
   filename: string;
   filepath: string;
+}
+
+export class TaskLogs {
+  id: number;
+  task_id: number;
+  description: string;
+  createdBy: string;
+  createdDate: string;
 }

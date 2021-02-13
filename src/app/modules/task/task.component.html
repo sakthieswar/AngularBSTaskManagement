@@ -13,19 +13,54 @@
         </a>
       </div>
       <div *ngIf="isAddEditForm==false">
-        <h3>Tasks:</h3>
+        <h3>Tasks</h3>
         <div class="form-group form-inline">
           <input class="form-control ml-2" type="text" name="name" [(ngModel)]="name" (ngModelChange)="searchTask()" placeholder="Please enter task name to filter." />
+          <input class="form-control ml-2" type="text" name="name" [(ngModel)]="task_display_id" (ngModelChange)="searchTaskID()" placeholder="Please enter task id to filter." />
+          <button type="button" class="btn btn-primary" (click)="clearSearch()" >Clear Search</button>
+        </div>
+        <div>
+          <form class="form-inline" [formGroup]="taskSearchForm" (ngSubmit)="GetTaskReportData()">
+            <div class="form-group row">
+              <div class="col-sm-3">
+                <label for="priority">Assigned To</label>
+                <select class="form-control" formControlName="assignedToUserName" (change)="changeAssignedToUser($event)" id="assignedTolist">
+                  <option value="">Please select assignee</option>
+                  <option *ngFor="let assigneduser of assignedTolist; let i = index" [value]="assignedTolist[i].user_id">
+                    {{assignedTolist[i].user_name}}
+                  </option>
+                </select>
+              </div>
+              <div class="col-sm-3">
+                <label for="statusName">Task Status</label>
+                <select class="form-control" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
+                  <option value="">Please select status</option>
+                  <option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
+                    {{taskstatuslist[i].name}}
+                  </option>
+                </select>
+              </div>
+              <div class="col-sm-4">
+                <label for="startdate">Start Date</label>
+                <input type="datetime-local" formControlName="startdate" class="form-control" />
+              </div>
+              <div class="col-sm-2">
+                <button type="submit" class="btn btn-primary">Filter Task</button>
+              </div>            
+
+            </div>
+            
+          </form>
         </div>
         <table class="table table-striped table-border bordered">
           <thead>
             <tr>
               <th style="width:10%;">#</th>
-              <th style="width:10%;">Title &nbsp; <i class="fa fa-sort"></i></th>
+              <th style="width:10%;" (click)="sort('name')">Title &nbsp; <i class="fa fa-sort"></i></th>
               <th style="width:10%;">Assigned To &nbsp; <i class="fa fa-sort"></i></th>
-              <th style="width:10%;">Description</th>
-              <th style="width:10%;">Attachment</th>
-              <th style="width:10%;" (click)="sort('priority')">Priority &nbsp; <i class="fa fa-sort"></i></th>
+              <!--<th style="width:10%;">Description</th>
+              <th style="width:10%;">Attachment</th>-->
+              <th style="width:10%;">Priority &nbsp; <i class="fa fa-sort"></i></th>
               <th style="width:10%;">Start Date</th>
               <th style="width:10%;">Deadline</th>
               <th style="width:10%;">Status</th>
@@ -33,27 +68,31 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let task of tasks | orderBy: key: reverse | paginate: { itemsPerPage: 5, currentPage: p }">
-              <td>{{ task.task_id }}</td>
+            <!--<tr *ngFor="let task of tasks  | paginate: { itemsPerPage: 5, currentPage: p }" [ngClass]="{'message': task.taskremainingtime < 0, 'warn': task.taskremainingtime > 1 && task.taskremainingtime < 30, 'error': task.taskremainingtime > 30}">-->
+            <tr *ngFor="let task of tasks | orderBy: key: reverse  | paginate: { itemsPerPage: 10, currentPage: p }" [ngClass]="{'message': task.taskremainingtime < 0, 'warn': task.taskremainingtime > 1 && task.taskremainingtime < 30, 'error': task.taskremainingtime > 30}">
+              <td>{{ task.task_display_id }}</td>
               <td>{{ task.name }}</td>
               <td>{{ task.assignedto }}</td>
-              <td>{{ task.description }}</td>
+              <!--<td>{{ task.description }}</td>
               <td>
                 <a href="#" (click)="getTaskAttachments(task.task_id)" data-toggle="modal" data-target="#TaskAttachmentModal">View Files</a>
-                <!--<a href="{{task.task_attachment_link}}" target="_blank" download="w3logo" (click)="download(task.task_attachment)">
-                  {{task.task_attachment}}
-                </a>-->
-              </td>
-              <td>
-                <span [ngClass]="task.priority">{{ task.priority }}</span>
-              </td>
-              <!--<td>{{ task.priority }}</td>-->
+
+              </td>-->
+              <!--<td>
+                            <a href="{{task.task_attachment_link}}" target="_blank" download="w3logo" (click)="download(task.task_attachment)">
+                {{task.task_attachment}}
+              </a>
+                          </td>-->
+              <!--<td><span [ngClass]="task.priority">{{ task.priority }}</span></td>-->
+              
+              <td>{{ task.priority }}</td>
               <td>{{ task.task_startdate }}</td>
               <td>{{ task.task_enddate }}</td>
               <td>{{ task.task_status_name }}</td>
               <td>
-                <a class="btn btn-success" (click)="taskEdit(task)">Edit</a>
-                <!--<a class="btn btn-danger" href="#">Delete</a>-->
+                <a class="" ng-disabled="task.task_status_name == 'Completed'" (click)="taskEdit(task)"><img style="width:30px; height:30px;" src="./assets/images/edit.png" alt="Edit"></a>
+                <a class=" " href="#" (click)="getTaskWorkLog(task.task_id)" data-toggle="modal" data-target="#TaskLogsModal"><img style="width:30px; height:30px;" src="./assets/images/log.png" alt="Log"></a>
+                <a *ngIf="isAdminRole" class=" " href="#"><img style="width:30px; height:30px;" src="./assets/images/delete.png" alt="Delete"></a>
               </td>
               <!--<td><ngb-highlight [result]="user.user_email"></ngb-highlight></td>
               <td><ngb-highlight [result]="user.contact_no"></ngb-highlight></td>-->
@@ -61,11 +100,11 @@
           </tbody>
 
         </table>
-        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+        <pagination-controls style="float: right !important;" (pageChange)="p = $event"></pagination-controls>
       </div>
     </div>
 
-    <div *ngIf="isAddEditForm">
+    <div class="col-lg-6" *ngIf="isAddEditForm">
       <div>
         <form [formGroup]="registerForm" (ngSubmit)="SaveTask()">
           <input type="hidden" name="_token" value="">
@@ -78,61 +117,108 @@
           </div>
           <div class="form-group">
             <label for="description">Description</label>
-            <input type="text" formControlName="description" class="form-control" [ngClass]="{ 'is-invalid': r.description.errors }" />
+            <textarea type="text" formControlName="description" class="form-control" [ngClass]="{ 'is-invalid': r.description.errors }"></textarea>
+            <!--<input  />-->
             <div *ngIf="r.description.errors" class="invalid-feedback">
             </div>
           </div>
-          <div class="form-group">
-            <label for="priority">Assigned To</label>
-            <select class="form-control" [(ngModel)]="selectedAssigneeID" formControlName="assignedToUserName" (change)="changeAssignedToUser($event)" id="assignedTolist">
-              <option value="">Please select assignee</option>
-              <option *ngFor="let assigneduser of assignedTolist; let i = index" [value]="assignedTolist[i].user_id">
-                {{assignedTolist[i].user_name}}
-              </option>
-            </select>
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <label for="priority">Assigned To</label>
+              <select class="form-control" [(ngModel)]="selectedAssigneeID" formControlName="assignedToUserName" (change)="changeAssignedToUser($event)" id="assignedTolist">
+                <option value="">Please select assignee</option>
+                <option *ngFor="let assigneduser of assignedTolist; let i = index" [value]="assignedTolist[i].user_id">
+                  {{assignedTolist[i].user_name}}
+                </option>
+              </select>
+            </div>
+            <div class="col-sm-6">
+              <label for="priority">Priority</label>
+              <!--<input type="text" formControlName="priority" class="form-control" />-->
+              <select class="form-control" [(ngModel)]="selectedTaskPriorityID" formControlName="priorityName" (change)="changePriority($event)" id="taskpriorities">
+                <option value="">Please select priority</option>
+                <option *ngFor="let category of taskpriorities; let i = index" [value]="taskpriorities[i].id">
+                  {{taskpriorities[i].name}}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-12">
+              <label for="priority">QC Assigned To</label>
+              <select class="form-control" [(ngModel)]="selectedAssigneeID" formControlName="assignedToUserName" (change)="changeAssignedToUser($event)" id="qcassignedTolist">
+                <option value="">Please select assignee</option>
+                <option *ngFor="let assigneduser of assignedTolist; let i = index" [value]="assignedTolist[i].user_id">
+                  {{assignedTolist[i].user_name}}
+                </option>
+              </select>
+            </div>
           </div>
           <div class="form-group">
             <label for="attachment">Attachment</label>
             <!--<input type="text" formControlName="attachment" class="form-control" [ngClass]="{ 'is-invalid': r.attachment.errors }" />-->
             <input type="file" class="form-control input-lg" name="attachment" (change)="onFileSelect($event)" />
           </div>
-          <div class="form-group">
-            <label for="priority">Priority</label>
-            <!--<input type="text" formControlName="priority" class="form-control" />-->
-            <select class="form-control" [(ngModel)]="selectedTaskPriorityID" formControlName="priorityName" (change)="changePriority($event)" id="taskpriorities">
-              <option value="">Please select priority</option>
-              <option *ngFor="let category of taskpriorities; let i = index" [value]="taskpriorities[i].id">
-                {{taskpriorities[i].name}}
-              </option>
-            </select>
+          <div *ngIf="isEditScreen==true">
+            <div *ngFor="let attachment of attachments">
+              <a href="{{attachment.filepath}}" target="_blank" download="w3logo" (click)="download(attachment.filepath)">
+                {{attachment.filename}}
+              </a>
+            </div>
           </div>
           <div class="form-group">
-            <label for="startdate">Start Date</label>
-            <input type="date" formControlName="startdate" class="form-control" />
+
           </div>
-          <div class="form-group">
-            <label for="enddate">Deadline</label>
-            <input type="date" formControlName="enddate" class="form-control" />
+          <div class="form-group row">
+            <!--<div class="col-sm-6">
+      <label for="startdate">Start Date</label>
+      <input type="datetime-local" formControlName="startdate" class="form-control" />
+    </div>-->
+            <div class="col-sm-6">
+              <label for="enddate">Deadline</label>
+              <input type="datetime-local" formControlName="enddate" class="form-control" />
+            </div>
+            <div class="col-sm-6">
+              <label for="status">Status</label>
+              <select *ngIf="isEditScreen==true" class="form-control" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
+                <option value="">Please select status</option>
+                <option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
+                  {{taskstatuslist[i].name}}
+                </option>
+              </select>
+              <select *ngIf="isEditScreen==false" class="form-control" disabled="disabled" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
+                <option value="{{selectedTaskStatusID}}">New</option>
+                <!--<option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
+          {{taskstatuslist[i].name}}
+        </option>-->
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="status">Status</label>
-            <!--<input type="text" formControlName="status" class="form-control" />-->
-            <select class="form-control" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
-              <option value="">Please select status</option>
-              <option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
-                {{taskstatuslist[i].name}}
-              </option>
-            </select>
-          </div>
+          <!--<div class="form-group">
+    <label for="enddate">Deadline</label>
+    <input type="datetime-local" formControlName="enddate" class="form-control" />
+  </div>-->
+          <!--<div class="form-group">
+    <label for="status">Status</label>
+    <select *ngIf="isEditScreen==true" class="form-control" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
+      <option value="">Please select status</option>
+      <option *ngFor="let status of taskstatuslist; let i = index" [value]="taskstatuslist[i].id">
+        {{taskstatuslist[i].name}}
+      </option>
+    </select>
+    <select *ngIf="isEditScreen==false" class="form-control" disabled="disabled" [(ngModel)]="selectedTaskStatusID" formControlName="statusName" (change)="changeStatus($event)" id="taskstatuslist">
+      <option value="{{selectedTaskStatusID}}">New</option>
+      {{taskstatuslist[i].name}}
+    </select>
+  </div>-->
           <div class="form-group" *ngIf="isTaskCompleted==true">
-            <label for="enddate">Work Hours</label>
+            <label for="workhours">Work Hours</label>
             <input type="number" formControlName="workhours" class="form-control" />
           </div>
 
           <div class="form-group">
             <div>
               <input type="submit" class="btn btn-success" value="Save" />
-
             </div>
           </div>
         </form>
@@ -167,7 +253,7 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let attachment of attachments | orderBy: key: reverse | paginate: { itemsPerPage: 5, currentPage: p }">
+                <tr *ngFor="let attachment of attachments">
                   <td>{{ attachment.id }}</td>
                   <td>
                     <a href="{{attachment.filepath}}" target="_blank" download="w3logo" (click)="download(attachment.filepath)">
@@ -176,13 +262,75 @@
                   </td>
                   <td>
                     <a class="btn btn-success">Remove</a>
-                    <!--<a class="btn btn-danger" href="#">Delete</a>-->
                   </td>
                 </tr>
               </tbody>
-
+              <!--<pagination-controls (pageChange)="q = $event"></pagination-controls>-->
             </table>
-            <pagination-controls (pageChange)="p = $event"></pagination-controls>
+
+          </div>
+        </div>
+      </div>
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" id="close-modal" data-dismiss="modal" style="display: none">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--The below content is to display task worklogs.-->
+<div class="modal show" id="TaskLogsModal" style="width:1250px;">
+  <div class="modal-dialog" style="width:1250px;">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header" style="background-color: gainsboro;">
+        <h4 class="modal-title">{{taskDisplayID}} : {{taskTitle}}</h4>
+        <button type="button" class="close" (click)="hideModalTaskLogs()">&times;</button>
+      </div>
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="">
+          <div>
+            <div>
+              <span><strong>Assigned To: </strong>{{taskAssignedTo}}</span><br />
+              <span><strong>Priority: </strong>{{taskPriority}}</span><br />
+              <span><strong>Status: </strong>{{taskStatus}}</span><br />
+            </div>
+            <br />
+            <div>
+              <table class="table table-striped table-border bordered">
+                <thead>
+                  <tr>
+                    <th>Upated Date</th>
+                    <th>Description</th>
+                    <th>Updated By</th>
+                    <th>Attachment</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let tasklog of tasklogs">
+                    <td> {{tasklog.created_date}} </td>
+                    <td>{{ tasklog.description }}</td>
+                    <td> {{tasklog.createdby}} </td>
+                    <td *ngIf="tasklog.filepath != ''">
+                      <a href="{{tasklog.filepath}}" target="_blank" download="w3logo" (click)="download(tasklog.filepath)">
+                        <!--<img style="width:30px; height:30px;" src="./assets/images/download_icon.jpg" alt="solefitness">-->
+                        {{tasklog.filename}}
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+                  <!--<pagination-controls (pageChange)="q = $event"></pagination-controls>-->
+              </table>
+            </div>
+
+            <!--<div *ngFor="let tasklog of tasklogs">
+              <h6><strong>{{tasklog.createdby}}</strong></h6>
+              <h6><strong>{{tasklog.created_date}}</strong></h6>
+              <p>Description:</p>
+              <p>{{tasklog.description}}</p>
+            </div>-->
           </div>
         </div>
       </div>

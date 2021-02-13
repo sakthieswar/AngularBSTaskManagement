@@ -13,11 +13,12 @@
           Back to order list
         </a>
       </div>
-      <div *ngIf="isAddEditForm==false" class="scrollme">
+      <div *ngIf="isAddEditForm==false" class="scrollme" #epltable>
         <h3>Orders:</h3>
         <!--<div class="form-group form-inline">
           <input class="form-control ml-2" type="text" name="name" [(ngModel)]="name" (ngModelChange)="searchOrder()" placeholder="Please enter task name to filter." />
         </div>-->
+        <button (click)="exportToExcel()" class="btn btn-success">Export To Excel</button>
         <table class="table table-striped table-border table-responsive" style="width:100%;">
           <thead>
             <tr>
@@ -117,9 +118,18 @@
             <label for="platform">Platform</label>
             <input type="text" formControlName="platform" class="form-control" />
           </div>
-          <div class="form-group">
+          <!--<div class="form-group">
             <label for="order_status">Order Status</label>
             <input type="text" formControlName="order_status" class="form-control" />
+          </div>-->
+          <div class="form-group">
+            <label for="priority">Order Status</label>
+            <select class="form-control" [(ngModel)]="selectedOrderStatusID" formControlName="orderStatusName" (change)="changeStatus($event)" id="orderStatusList">
+              <option value="">Please select status</option>
+              <option *ngFor="let assigneduser of orderStatus; let i = index" [value]="orderStatus[i].id">
+                {{orderStatus[i].name}}
+              </option>
+            </select>
           </div>
           <div class="form-group">
             <div>

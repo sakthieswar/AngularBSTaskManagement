@@ -14,3 +14,7 @@ export class Order {
   order_status: number;
   order_status_value: string;
 }
+export class OrderStatus {
+  id: number;
+  name: string;
+}

@@ -23,7 +23,8 @@ import { UserregisterComponent } from './modules/userregister/userregister.compo
 import { LoginComponent } from './modules/login/login.component';
 import { TaskregisterComponent } from './modules/taskregister/taskregister.component';
 import { OrderregisterComponent } from './modules/orderregister/orderregister.component';
-import { HomeComponent } from './modules/home/home.component'
+import { HomeComponent } from './modules/home/home.component';
+import { ReportsComponent } from './modules/reports/reports.component'
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { HomeComponent } from './modules/home/home.component'
     LoginComponent,
     TaskregisterComponent,
     OrderregisterComponent,
-    HomeComponent
+    HomeComponent,
+    ReportsComponent
   ],
   imports: [
     BrowserModule,

@@ -28,12 +28,14 @@ export class UserService {
       headers: headerOptions
     })
       .pipe(map(res => {
-        //alert(res['data']);
+        alert(res['data']);
         this.user = res['data'];
-        this.user = res['data'];
-        console.log(this.user[0].user_id);
+        //this.user = res['data'];
+        console.log(this.user[0].user_name);
         localStorage.setItem('user', this.user[0].user_id.toString());
         localStorage.setItem('role', this.user[0].role.toString());
+        localStorage.setItem('username', this.user[0].user_name.toString());
+        //alert(localStorage.getItem('username'));
 
 
         //alert(this.user[0].user_id);
@@ -93,6 +95,11 @@ export class UserService {
     let uploadURL = this.REST_API_SERVER + 'updateuser.php';
     return this.http.post<any>(uploadURL, data);
   }
+
+  //public deleteUser(user_d: string) {
+  //  let uploadURL = this.REST_API_SERVER + 'updateuser.php';
+  //  return this.http.delete<any>(uploadURL, user_d);
+  //}
 
   private handleError(error: HttpErrorResponse) {
     console.log(error);

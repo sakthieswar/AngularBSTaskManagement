@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpParams, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { Task, Attachment } from '../entities/task';
+import { Task, Attachment, TaskLogs } from '../entities/task';
 import { TaskPriority } from '../entities/task_priority';
 import { environment } from 'src/environments/environment';
 
@@ -17,6 +17,7 @@ export class TaskService {
   taskpriorities: TaskPriority[];
   taskstatus: TaskPriority[];
   attachments: Attachment[];
+  tasklogs: TaskLogs[];
 
 
   constructor(private http: HttpClient,
@@ -99,14 +100,42 @@ export class TaskService {
       catchError(this.handleError));
   }
 
+  public getAllTaskLogs(task_id: number): Observable<TaskLogs[]> {
+    return this.http.get(this.REST_API_SERVER + 'getTaskLogs.php?task_id=' + task_id).pipe(
+      map((res) => {
+        this.tasklogs = res['data'];
+        return this.tasklogs;
+      }),
+      catchError(this.handleError));
+  }
+
+  public getTaskDetailsByID(task_id: number): Observable<Task> {
+    return this.http.get(this.REST_API_SERVER + 'getTaskDetailByID.php?task_id=' + task_id).pipe(
+      map((res) => {
+        this.task = res['data'];
+        return this.task;
+      }),
+      catchError(this.handleError));
+  }
+
   public saveTask(data) {
     let uploadURL = this.REST_API_SERVER + 'addnewtaskwithattachment.php';
     return this.http.post<any>(uploadURL, data);
   }
 
   public updateTask(data) {
-    let uploadURL = this.REST_API_SERVER + 'updatetask.php';
+    let uploadURL = this.REST_API_SERVER + 'updatetaskwithattachment.php';
     return this.http.post<any>(uploadURL, data);
+  }
+
+  public getFilteredTasks(user_d: string, status_id: string, startdate: string) {
+    return this.http.get(this.REST_API_SERVER + 'getFilteredTasks.php?user_id=' + user_d + '&status_id=' + status_id + '&startdate=' + startdate).pipe(
+      // return this._http.get('http://localhost/read.php').pipe(
+      map((res) => {
+        this.tasks = res['data'];
+        return this.tasks;
+      }),
+      catchError(this.handleError));
   }
 
   //This is for download file.

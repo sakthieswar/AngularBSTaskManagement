@@ -23,9 +23,10 @@
 </nav>-->
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
   <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">VJ Media</a>
+    <ul class="navbar-nav mr-auto" >
+      <li class="nav-item active" style="width:60px; height:40px;"> 
+        <!--<a class="nav-link" href="#">VJ Media</a>-->
+        <a class="navbar-brand" ><img style="width:60px; height:40px;" src="./assets/images/vsdigimedia.jpg" alt="solefitness"></a>
       </li>
       <!--<li class="nav-item">
         <a class="nav-link" href="//codeply.com">Codeply</a>
@@ -42,15 +43,19 @@
     </ul>
   </div>
   <div class="mx-auto order-0">
-    <span class="navbar-brand mx-auto">VJ Digimedia</span>
+    <span class="navbar-brand mx-auto">VS Digi Media</span>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
       <span class="navbar-toggler-icon"></span>
     </button>
   </div>
   <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
     <ul class="navbar-nav ml-auto">
-      <li class="nav-item">
-        <a class="nav-link" href="#">Right</a>
+      <li class="nav-item" *ngIf="isLogin==true">
+        <a class="nav-link  dropdown-toggle " href="#" data-toggle="dropdown"><span>{{loggedInUserName}}</span></a>
+        <ul class="dropdown-menu order-0">
+          <li><a class="dropdown-item" href="#"> View profile</a></li>
+          <li><a class="dropdown-item" href="#" data-toggle="modal" data-target="#mdlChangepassword"> Change password</a></li>
+        </ul>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#" *ngIf="isLogin" (click)="logoff()">Logoff</a>
@@ -58,3 +63,56 @@
     </ul>
   </div>
 </nav>
+
+<div class="modal show" id="mdlChangepassword">
+  <div class="modal-dialog" style="width:1250px;">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Change password</h4>
+        <button type="button" class="close" (click)="hideCPModal()">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <div class="">
+          <div>
+            <!--<form [formGroup]="passwordChangeForm" (ngSubmit)="ChangeUserPassword()">
+              <div class="form-group">
+                <label for="password">New Password</label>
+                <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': p.password.errors }" />
+                <div *ngIf="p.password.errors" class="invalid-feedback">
+                  <div *ngIf="p.password.errors.required">Password is required</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="cpassword">Confirm Password</label>
+                <input type="password" formControlName="cpassword" class="form-control" [ngClass]="{ 'is-invalid': passwordChangeForm.hasError('notSame') }" />
+                <div *ngIf="passwordChangeForm.hasError('notSame')" class="invalid-feedback">
+                  <div *ngIf="passwordChangeForm.hasError('notSame')">Password & confirm password are should be match</div>
+                </div>
+              </div>
+              <div class="form-group">
+                <div>
+                  <input type="submit" class="btn btn-success" value="Reset Password" />
+
+                </div>
+              </div>
+            </form>-->
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-primary" (click)="sendModal()" >Send</button>
+        <button type="button" class="btn btn-danger" (click)="hideModal()">Close</button>-->
+        <!-- this button is hidden, used to close from typescript -->
+        <button type="button" id="close-modal" data-dismiss="modal" style="display: none">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
