@@ -299,7 +299,7 @@ export class TaskComponent implements OnInit {
     formData.append('created_by', this.user_id);
 
     if (this.statusId == undefined) {
-      statusID = this.selectedTaskStatusID.toString()
+      statusID = this.selectedTaskStatusID.toString();
     } else {
       statusID = this.statusId;
     }
