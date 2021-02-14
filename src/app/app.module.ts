@@ -24,7 +24,8 @@ import { LoginComponent } from './modules/login/login.component';
 import { TaskregisterComponent } from './modules/taskregister/taskregister.component';
 import { OrderregisterComponent } from './modules/orderregister/orderregister.component';
 import { HomeComponent } from './modules/home/home.component';
-import { ReportsComponent } from './modules/reports/reports.component'
+import { ReportsComponent } from './modules/reports/reports.component';
+import { DashboardComponent } from './modules/dashboard/dashboard.component'
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { ReportsComponent } from './modules/reports/reports.component'
     TaskregisterComponent,
     OrderregisterComponent,
     HomeComponent,
-    ReportsComponent
+    ReportsComponent,
+    DashboardComponent
   ],
   imports: [
     BrowserModule,

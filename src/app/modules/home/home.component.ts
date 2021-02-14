@@ -41,8 +41,6 @@ export class HomeComponent implements OnInit {
   get l() { return this.loginForm.controls; }
 
   onSave() {
-    //this.router.navigateByUrl('admin');
-
     if (this.loginForm.invalid) {
       return;
     }
@@ -51,24 +49,11 @@ export class HomeComponent implements OnInit {
       .pipe(first())
       .subscribe(
         data => {
-          //this.router.navigate(['/user']);
           this.isvaliduser = true;
           window.location.reload();
-          //this.isl.isLogin = true;
-          //this.router.navigateByUrl('admin');
-
-
-          //console.log(data);
-          //this.loading = false;
-          //this.hideModal();
-          //this.alertService.success("Successfully login");
-          //  this.router.navigate([this.returnUrl]);
         },
         error => {
           alert('Username or password is incorrect.');
-          //console.log(error);
-          //this.alertService.error(error);
-          //this.loading = false;
         });
   }
 
