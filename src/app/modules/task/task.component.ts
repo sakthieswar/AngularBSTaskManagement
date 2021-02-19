@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TaskService } from '../../services/task.service';
@@ -10,6 +10,8 @@ import { User } from '../../entities/user';
 import { UserService } from '../../services/user.service';
 import { Observable } from 'rxjs';
 import { saveAs } from 'file-saver';
+import * as xlsx from 'xlsx'; //This is used to export the data into excel.
+
 
 declare var $: any;
 
@@ -20,6 +22,9 @@ declare var $: any;
   providers: [DatePipe]
 })
 export class TaskComponent implements OnInit {
+
+  @ViewChild('epltable', { static: false }) epltable: ElementRef;
+
   task: Task;
   tasks: Task[];
   attachments: Attachment[];
@@ -49,6 +54,7 @@ export class TaskComponent implements OnInit {
   selectedTaskStatusID: number = 1;
   selectedQCAssigneeID: number = 0;
   selectedFrequencyID: number = 0;
+  selectedTaskType: number = 0;
 
   isAdminRole: boolean = false;
   isNewTask: boolean = false;
@@ -119,18 +125,19 @@ export class TaskComponent implements OnInit {
       taskstatuslist: ["0"],
       assignedTolist: ["0"],
       qcassignedToList: [''],
-      qcassignedToUserId: ["0"],
-      frequency: ["0"],
+      qcassignedToUserId: [null, Validators.required],
+      frequency: [null, Validators.required],
       description: [null],
       attachment: [null],
       priority: [null],
       startdate: [],
       enddate: [null],
       status: [null],
-      priorityName: [''],
-      statusName: [''],
-      assignedToUserName: [''],
-      workhours: ['']
+      priorityName: [null, Validators.required],
+      statusName: [null, Validators.required],
+      assignedToUserName: [null, Validators.required],
+      workhours: [''],
+      taskType: [null,Validators.required]
     });
 
     this.taskSearchForm = this.formBuilder.group({
@@ -311,6 +318,12 @@ export class TaskComponent implements OnInit {
     let statusID;
     let assignedUserID;
     let priorityId;
+    //alert(this.registerForm.get('taskType').value);
+
+    //if (this.registerForm.invalid) {
+    //  alert('Please fill all the mandatory fields.');
+    //  return;
+    //}
 
     formData.append('name', this.registerForm.get('name').value);
     formData.append('description', this.registerForm.get('description').value);
@@ -322,17 +335,18 @@ export class TaskComponent implements OnInit {
     formData.append('created_by', this.user_id);
     formData.append('frequency', this.registerForm.get('frequency').value);
     formData.append('qcassignedto', this.registerForm.get('qcassignedToUserId').value);
+    formData.append('taskType', this.registerForm.get('taskType').value);
 
 
 
     if (this.assignedToUserId == undefined) {
-      assignedUserID = this.selectedAssigneeID.toString()
+      assignedUserID = this.selectedAssigneeID.toString();
     } else {
       assignedUserID = this.assignedToUserId;
     }
 
     if (this.priorityId == undefined) {
-      priorityId = this.selectedTaskPriorityID.toString()
+      priorityId = this.selectedTaskPriorityID.toString();
     } else {
       priorityId = this.priorityId;
     }
@@ -340,7 +354,7 @@ export class TaskComponent implements OnInit {
 
     formData.append('assignedto', assignedUserID);
     formData.append('priority', priorityId);
-
+    //alert(this.registerForm.get('attachment').value);
 
     if (index != null) {
       //alert(' task id: ' + this.registerForm.get('task_id').value);
@@ -366,8 +380,10 @@ export class TaskComponent implements OnInit {
             //console.log(res);
           },
           (err) => {
-            if (this.registerForm.get('attachment').value == "")
+            if (this.registerForm.get('attachment').value == "" || this.registerForm.get('attachment').value == null) {
+              alert('You have successfully updated the task: ' + this.registerForm.get('name').value);
               window.location.reload();
+            }
             else
               console.log(err.message);
           }
@@ -388,6 +404,10 @@ export class TaskComponent implements OnInit {
             //console.log(res);
           },
           (err) => {
+            if (this.registerForm.get('attachment').value == "" || this.registerForm.get('attachment').value == null) {
+              alert('You have successfully added task: ' + this.registerForm.get('name').value);
+              window.location.reload();
+            }
             console.log(err);
           }
         );
@@ -409,7 +429,10 @@ export class TaskComponent implements OnInit {
     this.selectedTaskPriorityID = task.task_priority_id;
     this.selectedTaskStatusID = task.task_status;
     this.selectedQCAssigneeID = task.qcassignedtouserid;
-    //alert(task.frequency);
+    this.selectedFrequencyID = task.frequency;
+    this.selectedTaskType = task.tasktypeid;
+
+
     if (task.task_status_name == "New") {
       this.isNewTask = true;
     } else {
@@ -436,7 +459,8 @@ export class TaskComponent implements OnInit {
       status: task.task_status,
       priorityName: null,
       statusName: null,
-      workhours: task.work_hours
+      workhours: task.work_hours,
+      taskType: task.tasktypeid
     })
   }
   taskDelete(task) {
@@ -488,6 +512,12 @@ export class TaskComponent implements OnInit {
       startdate: this.todayDate,
       enddate: this.todayDate
     });
+    this.selectedAssigneeID = 0;
+    this.selectedTaskPriorityID = 0;
+    this.selectedTaskStatusID = 1;
+    this.selectedQCAssigneeID = 0;
+    this.selectedFrequencyID = 0;
+    this.selectedTaskType = 0;
   }
 
   resetAddForm() {
@@ -559,6 +589,9 @@ export class TaskComponent implements OnInit {
   hideModalTaskLogs(): void {
     document.getElementById('TaskLogsModal').click();
   }
+  hideReportsModal() {
+    document.getElementById('TaskReportsModal').click();
+  }
 
 
   getDataDiff(startDate, endDate) {
@@ -595,6 +628,14 @@ export class TaskComponent implements OnInit {
         this.error = err;
       }
     )
+  }
+
+  exportToExcel() {
+    const ws: xlsx.WorkSheet =
+      xlsx.utils.table_to_sheet(this.epltable.nativeElement);
+    const wb: xlsx.WorkBook = xlsx.utils.book_new();
+    xlsx.utils.book_append_sheet(wb, ws, 'Sheet1');
+    xlsx.writeFile(wb, 'epltable.xlsx');
   }
 
 }

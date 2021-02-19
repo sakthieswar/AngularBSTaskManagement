@@ -17,7 +17,8 @@ export class Task {
   frequency: string;
   qcassignedto: string;
   qcassignedtouserid: number;
-
+  tasktypeid: number;
+  tasktype: string;
 }
 
 export class Attachment {
@@ -42,4 +43,9 @@ export class TaskCounts {
   returned: number;
   completed: number;
   closed: number;
+}
+
+export class TaskType {
+  id: number;
+  name: string;
 }
