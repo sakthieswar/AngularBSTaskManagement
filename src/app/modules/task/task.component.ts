@@ -32,6 +32,8 @@ export class TaskComponent implements OnInit {
   taskpriorities: TaskPriority[];
   taskstatuslist: TaskPriority[];
   assignedTolist: User[];
+  qcassignedToList: User[];
+  tasktypes: TaskPriority[];
   priorityName: string;
   priorityId: string;
   statusName: string;
@@ -42,12 +44,14 @@ export class TaskComponent implements OnInit {
 
   isFileChanged: boolean = false;
 
-  selectedAssigneeID: number = 1;
-  selectedTaskPriorityID: number = 1;
+  selectedAssigneeID: number = 0;
+  selectedTaskPriorityID: number = 0;
   selectedTaskStatusID: number = 1;
+  selectedQCAssigneeID: number = 0;
+  selectedFrequencyID: number = 0;
 
   isAdminRole: boolean = false;
-  isTaskCompleted: boolean = false;
+  isNewTask: boolean = false;
   isEditScreen: boolean = false;
   todayDate = new Date().toISOString();
   user_id: string;
@@ -81,11 +85,12 @@ export class TaskComponent implements OnInit {
     } else {
       this.getAllTaskPriority();
       this.getAllTaskStatus();
-      //this.getAllUserList(); // This can be enabled if user wants to load their tasks alone.
+      this.getAllUserList(); // This can be enabled if user wants to load their tasks alone.
+      this.getAllTaskType();
       this.getAllTasks();
       this.generateFormControls();
       this.isAddEditForm = false;
-      this.isTaskCompleted = false;
+      this.isNewTask = false;
       this.user_id = user;
 
       //this.selectedAssigneeID = 1;
@@ -93,11 +98,11 @@ export class TaskComponent implements OnInit {
       //this.selectedTaskStatusID = 1;
       if (loginrole == 1) {
         this.isAdminRole = true;
-        this.getAllTasks();
-        this.getAllUserList();
+        //this.getAllTasks();
+        //this.getAllUserList();
         //getUserAllTaskList
       } else {
-        this.getAllUserTasks(user);
+        //this.getAllUserTasks(user);
       }
     }
 
@@ -110,9 +115,12 @@ export class TaskComponent implements OnInit {
       index: [{ value: null, disabled: true }],
       task_id: [{ value: null, disabled: true }],
       name: [null, Validators.required],
-      taskpriorities: [''],
-      taskstatuslist: [''],
-      assignedTolist: [''],
+      taskpriorities: ["0"],
+      taskstatuslist: ["0"],
+      assignedTolist: ["0"],
+      qcassignedToList: [''],
+      qcassignedToUserId: ["0"],
+      frequency: ["0"],
       description: [null],
       attachment: [null],
       priority: [null],
@@ -126,11 +134,15 @@ export class TaskComponent implements OnInit {
     });
 
     this.taskSearchForm = this.formBuilder.group({
-      taskstatuslist: [''],
-      assignedTolist: [''],
-      startdate: [],
-      statusName: [''],
-      assignedToUserName: ['']
+      taskstatuslist: ["0"],
+      assignedTolist: ["0"],
+      qcassignedToList: [''],
+      startdate: [''],
+      enddate: [''],
+      statusName: ['0'],
+      task_display_id: [],
+      name: [],
+      assignedToUserName: ['0']
     });
   }
 
@@ -174,17 +186,31 @@ export class TaskComponent implements OnInit {
     this.statusId = event.target['options']
     [event.target['options'].selectedIndex].value;
     //alert(this.statusName);
-    if (this.statusName == "Completed" || this.statusName == "In Progress") {
-      this.isTaskCompleted = true;
+    if (this.statusName == "New") {
+      this.isNewTask = true;
     } else {
-      this.isTaskCompleted = false;
+      this.isNewTask = false;
     }
+  }
+
+  getAllTaskType(): void {
+    this.taskService.getAllTaskTypeList().subscribe(
+      (res: TaskPriority[]) => {
+        this.tasktypes = res;
+        //console.log(this.categories);
+        return this.tasktypes;
+      },
+      (err) => {
+        this.error = err;
+      }
+    )
   }
 
   getAllUserList(): void {
     this.userService.getAllUsersList().subscribe(
       (res: User[]) => {
         this.assignedTolist = res;
+        this.qcassignedToList = res;
         //console.log(this.categories);
         return this.assignedTolist;
       },
@@ -285,24 +311,19 @@ export class TaskComponent implements OnInit {
     let statusID;
     let assignedUserID;
     let priorityId;
-    //alert(this.user_id);
 
     formData.append('name', this.registerForm.get('name').value);
     formData.append('description', this.registerForm.get('description').value);
     formData.append('attachment', this.registerForm.get('attachment').value);
-    //formData.append('priority', this.priorityId);
 
-    //formData.append('startdate', this.todayDate);
     formData.append('enddate', this.registerForm.get('enddate').value);
 
     //formData.append('assignedto', this.assignedToUserId);
     formData.append('created_by', this.user_id);
+    formData.append('frequency', this.registerForm.get('frequency').value);
+    formData.append('qcassignedto', this.registerForm.get('qcassignedToUserId').value);
 
-    if (this.statusId == undefined) {
-      statusID = this.selectedTaskStatusID.toString();
-    } else {
-      statusID = this.statusId;
-    }
+
 
     if (this.assignedToUserId == undefined) {
       assignedUserID = this.selectedAssigneeID.toString()
@@ -316,7 +337,7 @@ export class TaskComponent implements OnInit {
       priorityId = this.priorityId;
     }
 
-    formData.append('status', statusID);
+
     formData.append('assignedto', assignedUserID);
     formData.append('priority', priorityId);
 
@@ -325,7 +346,13 @@ export class TaskComponent implements OnInit {
       //alert(' task id: ' + this.registerForm.get('task_id').value);
       formData.append('task_id', this.registerForm.get('task_id').value);
       formData.append('workhours', this.registerForm.get('workhours').value);
-      formData.append('startdate', this.registerForm.get('startdate').value);
+      //formData.append('startdate', this.registerForm.get('startdate').value);
+      if (this.statusId == undefined) {
+        statusID = this.selectedTaskStatusID.toString();
+      } else {
+        statusID = this.statusId;
+      }
+      formData.append('status', statusID);
 
 
       this.taskService.updateTask(formData)
@@ -339,7 +366,6 @@ export class TaskComponent implements OnInit {
             //console.log(res);
           },
           (err) => {
-            alert(this.registerForm.get('attachment').value);
             if (this.registerForm.get('attachment').value == "")
               window.location.reload();
             else
@@ -349,7 +375,7 @@ export class TaskComponent implements OnInit {
     }
 
     else {
-      //formData.append('status', this.selectedTaskStatusID.toString());
+      formData.append('status', this.selectedTaskStatusID.toString());
       formData.append('startdate', this.todayDate);
       this.taskService.saveTask(formData)
         .subscribe(
@@ -377,11 +403,19 @@ export class TaskComponent implements OnInit {
     //$("#taskModal").modal('show');
     this.showAddWindow();
     this.isEditScreen = true;
-    this.getTaskAttachments(task.task_id);
+    //this.getTaskAttachments(task.task_id);
 
     this.selectedAssigneeID = task.assigned_to_userid;
     this.selectedTaskPriorityID = task.task_priority_id;
     this.selectedTaskStatusID = task.task_status;
+    this.selectedQCAssigneeID = task.qcassignedtouserid;
+    //alert(task.frequency);
+    if (task.task_status_name == "New") {
+      this.isNewTask = true;
+    } else {
+      this.isNewTask = false;
+    }
+
 
     this.registerForm.setValue({
       index: task.task_id,
@@ -390,21 +424,55 @@ export class TaskComponent implements OnInit {
       taskpriorities: [],
       taskstatuslist: [],
       assignedTolist: [],
+      qcassignedToList: [],
+      qcassignedToUserId: task.qcassignedto,
       assignedToUserName: task.assignedto,
       description: task.description,
       attachment: task.task_attachment,
+      frequency: task.frequency,
       priority: task.priority,
       startdate: task.task_startdate,
       enddate: task.task_enddate,
       status: task.task_status,
       priorityName: null,
       statusName: null,
-      workhours: []
+      workhours: task.work_hours
     })
+  }
+  taskDelete(task) {
+    if (window.confirm('Are sure you want to delete this item ?')) {
+      //put your delete method logic here
+      this.taskService.deleteTask(task.task_id).subscribe(
+        (res: string) => {
+          this.getAllTasks();
+          alert(res['data'].result);
+        },
+        (err) => {
+          this.error = err;
+        });
+    }
+
+  }
+  closeTask(task) {
+    if (window.confirm('Are sure you want to close this item ?')) {
+      const formData = new FormData();
+      //put your delete method logic here
+      formData.append('created_by', this.user_id);
+      formData.append('task_id', task.task_id);
+      this.taskService.closeTask(formData).subscribe(
+        (res: string) => {
+          this.getAllTasks();
+          //alert(res['data'].result);
+        },
+        (err) => {
+          this.error = err;
+        });
+    }
   }
   showAddWindow() {
     this.isAddEditForm = true;
     this.resetForm();
+    this.isNewTask = true; 
   }
   showTaskListWindow() {
     this.isAddEditForm = false;
@@ -420,6 +488,10 @@ export class TaskComponent implements OnInit {
       startdate: this.todayDate,
       enddate: this.todayDate
     });
+  }
+
+  resetAddForm() {
+    this.showTaskListWindow();
   }
 
   //This is for search.
@@ -446,9 +518,10 @@ export class TaskComponent implements OnInit {
       });
     }
   }
-  clearSearch() {    
-    this.name = "";
-    this.task_display_id = "";
+  clearSearch() {
+    //this.name = "";
+    //this.task_display_id = "";
+    this.taskSearchForm.reset();
     this.getAllTasks();
   }
 
@@ -499,12 +572,18 @@ export class TaskComponent implements OnInit {
   //var diff = getDataDiff(new Date(inputJSON.created_date), new Date(inputJSON.current_time));
   //console.log(diff);
   GetTaskReportData() {
-    let user_id = this.assignedToUserId == undefined ? '' : this.assignedToUserId;
-    let statusId = this.statusId == undefined ? '' : this.statusId;
-    let startdate = this.taskSearchForm.get('startdate').value;
-    startdate = startdate == null ? '' : startdate;
+    //let user_id = this.assignedToUserId == undefined ? '' : this.assignedToUserId;
+    //let statusId = this.statusId == undefined ? '' : this.statusId;
+    //let startdate = this.taskSearchForm.get('startdate').value;
+    //startdate = startdate == null ? '' : startdate;
+    let user_id = this.assignedToUserId == undefined ? '0' : this.taskSearchForm.get('assignedToUserName').value;
+    let statusId = this.statusId == undefined ? '0' : this.taskSearchForm.get('statusName').value;
+    let startdate = this.taskSearchForm.get('startdate').value == "" ? '0' : this.taskSearchForm.get('startdate').value;
+    let task_name = this.taskSearchForm.get('name').value == null ? '0' : this.taskSearchForm.get('name').value;
+    let task_id = this.taskSearchForm.get('task_display_id').value == null ? '0' : this.taskSearchForm.get('task_display_id').value;
+    let enddate = this.taskSearchForm.get('enddate').value == "" ? '0' : this.taskSearchForm.get('enddate').value;
 
-    this.taskService.getFilteredTasks(user_id, statusId, startdate).subscribe(
+    this.taskService.getFilteredTasks(user_id, statusId, startdate, task_name, task_id, enddate).subscribe(
       (res: Task[]) => {
         this.tasks = res;
         if (this.tasks.length > 0) {

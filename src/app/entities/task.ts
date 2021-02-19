@@ -11,8 +11,13 @@ export class Task {
   status: string;
   assignedtouserid: number;
   statusid: number;
+  work_hours: number;
   priorityid: number;
   taskremainingtime: number;
+  frequency: string;
+  qcassignedto: string;
+  qcassignedtouserid: number;
+
 }
 
 export class Attachment {
@@ -28,4 +33,13 @@ export class TaskLogs {
   description: string;
   createdBy: string;
   createdDate: string;
+}
+
+export class TaskCounts {
+  newtasks: number;
+  inqc: number;
+  qccompleted: number;
+  returned: number;
+  completed: number;
+  closed: number;
 }

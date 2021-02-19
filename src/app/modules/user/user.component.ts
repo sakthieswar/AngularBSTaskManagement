@@ -174,6 +174,7 @@ export class UserComponent implements OnInit {
     }
   }
 
+
   userEdit(user) {
     //alert(task.decription);
     //$("#taskModal").modal('show');
@@ -195,6 +196,21 @@ export class UserComponent implements OnInit {
     })
     //this.assignedToUserId = "2";
     //this.registerForm.controls.taskpriorities.patchValue(this.taskpriorities[0].id);
+  }
+
+  userDelete(user) {
+    if (window.confirm('Are sure you want to delete this item ?')) {
+      //put your delete method logic here
+      this.authenticationService.deleteUser(user.user_id).subscribe(
+        (res: string) => {
+          this.getAllUsers();
+          alert(res['data'].result);
+        },
+        (err) => {
+          this.error = err;
+        });
+    }
+    
   }
 
   //This is for search.

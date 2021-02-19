@@ -130,23 +130,23 @@ export class ReportsComponent implements OnInit {
 
   GetTaskReportData() {   
 
-    let user_id = this.assignedToUserId == undefined ? '' : this.assignedToUserId;
-    let statusId = this.statusId == undefined ? '' : this.statusId;
-    let startdate = this.taskSearchForm.get('startdate').value;
-    startdate = startdate == null ? '' : startdate;
+    //let user_id = this.assignedToUserId == undefined ? '' : this.assignedToUserId;
+    //let statusId = this.statusId == undefined ? '' : this.statusId;
+    //let startdate = this.taskSearchForm.get('startdate').value;
+    //startdate = startdate == null ? '' : startdate;
 
-    this.taskService.getFilteredTasks(user_id, statusId, startdate).subscribe(
-      (res: Task[]) => {
-        this.tasks = res;
-        if (this.tasks.length > 0) {
-          this.isTaskResult = true;
+    //this.taskService.getFilteredTasks(user_id, statusId, startdate).subscribe(
+    //  (res: Task[]) => {
+    //    this.tasks = res;
+    //    if (this.tasks.length > 0) {
+    //      this.isTaskResult = true;
 
-        }
-        console.log(this.tasks);
-      },
-      (err) => {
-        this.error = err;
-      }
-    )
+    //    }
+    //    console.log(this.tasks);
+    //  },
+    //  (err) => {
+    //    this.error = err;
+    //  }
+    //)
   }
 }

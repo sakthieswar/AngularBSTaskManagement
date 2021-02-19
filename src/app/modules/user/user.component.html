@@ -1,15 +1,15 @@
 
 <div class="row padding-0">
-  <div class="col-lg-2">
+  <div class="col-lg-1">
     <app-side></app-side>
   </div>
-  <div class="col-lg-10">
+  <div class="col-lg-11">
     <div class="mt-4">
       <a class="btn btn-success" *ngIf="isAddEditForm==false" href="#" style="float:right;" data-toggle="modal" (click)="showAddWindow()">
         Add User
       </a>
       <a class="btn btn-success" *ngIf="isAddEditForm==true" href="#" style="float:right;" data-toggle="modal" (click)="showUserListWindow()">
-        Back to task list
+        Back to User list
       </a>
     </div>
     <div *ngIf="isAddEditForm==false">
@@ -38,8 +38,8 @@
               <td>{{ user.user_email }}</td>
               <td>{{ user.contact_no }}</td>
               <td>
-                <a class="btn btn-success" (click)="userEdit(user, i)">Edit</a>
-                <a *ngIf="isAdminRole" class="btn btn-danger" href="#">Delete</a>
+                <a class="btn btn-success" (click)="userEdit(user)">Edit</a>
+                <a *ngIf="isAdminRole" class="btn btn-danger" (click)="userDelete(user)">Delete</a>
               </td>
             </tr>
           </tbody>
@@ -87,7 +87,7 @@
         <div class="form-group">
           <div>
             <input type="submit" class="btn btn-success" value="Register" />
-
+            <input type="button" class="btn btn-secondary" (click)="showUserListWindow()" value="Cancel" />
           </div>
         </div>
       </form>

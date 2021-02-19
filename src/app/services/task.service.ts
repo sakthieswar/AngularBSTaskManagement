@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient, HttpParams, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { Task, Attachment, TaskLogs } from '../entities/task';
+import { Task, Attachment, TaskLogs, TaskCounts } from '../entities/task';
 import { TaskPriority } from '../entities/task_priority';
 import { environment } from 'src/environments/environment';
 
@@ -16,8 +16,10 @@ export class TaskService {
   tasks: Task[];
   taskpriorities: TaskPriority[];
   taskstatus: TaskPriority[];
+  tasktypes: TaskPriority[];
   attachments: Attachment[];
   tasklogs: TaskLogs[];
+  taskcounts: TaskCounts;
 
 
   constructor(private http: HttpClient,
@@ -60,6 +62,18 @@ export class TaskService {
       map((res) => {
         this.taskstatus = res['data'];
         return this.taskstatus;
+      }),
+      catchError(this.handleError));
+  }
+
+  public getAllTaskTypeList(): Observable<TaskPriority[]> {
+    // alert(this.REST_API_SERVER + 'read.php');
+
+    return this.http.get(this.REST_API_SERVER + 'getAllTaskType.php').pipe(
+      // return this._http.get('http://localhost/read.php').pipe(
+      map((res) => {
+        this.tasktypes = res['data'];
+        return this.tasktypes;
       }),
       catchError(this.handleError));
   }
@@ -127,13 +141,37 @@ export class TaskService {
     let uploadURL = this.REST_API_SERVER + 'updatetaskwithattachment.php';
     return this.http.post<any>(uploadURL, data);
   }
+  public closeTask(data) {
+    let uploadURL = this.REST_API_SERVER + 'closetask.php';
+    return this.http.post<any>(uploadURL, data);
+  }
 
-  public getFilteredTasks(user_d: string, status_id: string, startdate: string) {
-    return this.http.get(this.REST_API_SERVER + 'getFilteredTasks.php?user_id=' + user_d + '&status_id=' + status_id + '&startdate=' + startdate).pipe(
+  public getFilteredTasks(user_id: string, status_id: string, startdate: string, task_name: string, task_id: string, enddate: string) {
+    return this.http.get(this.REST_API_SERVER + 'getFilteredTasks.php?user_id=' + user_id + '&status_id=' + status_id + '&startdate=' + startdate + '&taskname=' + task_name + '&taskid=' + task_id + '&enddate=' + enddate).pipe(
       // return this._http.get('http://localhost/read.php').pipe(
       map((res) => {
         this.tasks = res['data'];
         return this.tasks;
+      }),
+      catchError(this.handleError));
+  }
+
+  public deleteTask(task_id: string) {
+    return this.http.get(this.REST_API_SERVER + 'deleteTask.php?task_id=' + task_id).pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError(this.handleError));
+  }
+
+  public getTaskCounts(): Observable<TaskCounts> {
+    // alert(this.REST_API_SERVER + 'read.php');
+
+    return this.http.get(this.REST_API_SERVER + 'getTaskCounts.php').pipe(
+      // return this._http.get('http://localhost/read.php').pipe(
+      map((res) => {
+        this.taskcounts = res['data'];
+        return this.taskcounts;
       }),
       catchError(this.handleError));
   }

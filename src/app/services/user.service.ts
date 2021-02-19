@@ -28,7 +28,6 @@ export class UserService {
       headers: headerOptions
     })
       .pipe(map(res => {
-        alert(res['data']);
         this.user = res['data'];
         //this.user = res['data'];
         console.log(this.user[0].user_name);
@@ -96,10 +95,13 @@ export class UserService {
     return this.http.post<any>(uploadURL, data);
   }
 
-  //public deleteUser(user_d: string) {
-  //  let uploadURL = this.REST_API_SERVER + 'updateuser.php';
-  //  return this.http.delete<any>(uploadURL, user_d);
-  //}
+  public deleteUser(user_id: string) {
+    return this.http.get(this.REST_API_SERVER + 'deleteUser.php?user_id=' + user_id).pipe(
+      map((res) => {
+        return res;
+      }),
+      catchError(this.handleError));
+  }
 
   private handleError(error: HttpErrorResponse) {
     console.log(error);
